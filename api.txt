@@ -1,0 +1,3690 @@
+
+# 仿牧游宝典项目API 1.01
+## 介绍
+- 系统基于 ThinkSNS v4 开发
+- 正常 T4API接入地址  api.php
+- API默认需要用户登录后，传输正确的 oauth_token和  oauth_token_secret才能正常访问，
+- 但是，api也有不用登陆的 api，这种 api我们称之为白名单  api，添加白名单 api在
+/config/api.inc.php中配置
+- 以下 API地址格式是/mod/act的形式书写，例如  api.php?mod=Oauth&act=authorize将以
+/Oauth/authorize的形式描述。
+- API按照按照功能文件排列书写，不分先后，可能有些功能会被岔开！
+- API参数传递，支持 get和  post混合传输，但是，mod和  act必须  get方式，其他参数建议 post方式传输
+- 随着功能开发 文档会逐步更新 版本迭代
+- 目前版本 1.22
+- 更新时间 2019 12 23
+
+## 分类介绍
+- 权限类接口 /Oauth/  白名单
+- 系统类接口/System/
+- 消息类接口 /Message/
+- 个人主页类接口 /User/
+- 任务类接口 /Task/
+- 礼物商城类接口 |/Gift/
+- 找人类接口 /FindPeople/
+- 微博类接口 /Weibo/
+- 标签类接口 /Tag/
+- 举报类接口 /Denounce/
+- 积分充值类接口 /Credit/
+- 签到类接口 /Checkin/
+- 频道相关类接口 /Channel/
+- 全局系列接口  /Public/ ==新增==  白名单
+- 名片库系列接口  /Namecard/ ==新增==  
+## 注意提示
+
+> 接口 模型为大写首字母 大小写不符会不认 示例 :Outh
+
+> 动作为小写字母开头 驼峰式 示例 : abcDef
+
+## 小程序发送数据相关
+###### 授权发送
+
+```
+wxapp_id: 10001
+token: 
+code: 001qNzqI19VOi00Z8DoI1hMDqI1qNzqj
+user_info: {"nickName":"saruri","gender":1,"language":"zh_CN","city":"","province":"艾哈迈达巴德","country":"印度","avatarUrl":"https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJOWtu6k1mkCeux1mDS8VsJdhWbPH0EBdeS3dSafRnsmfR9guLUriceicw4rDEQeUU65ic95pDLyial2g/132"}
+encrypted_data: Qd00CqgoPWWX+vfTTRb9OOSLBhLARHVh38hzucXXwMvTOcw1ywChnRv7avOJTu2x6pXVno6BSRWyoHne9f4gdT+6w29AZf3cTAKQfNcUTHdDIZYSp6/95vxdhRdm+EsoKyJoIGEKBFc5CUuMFXWRCPioymbi8x+AVVD8rSDcD2r9eCFEgf4glcEtz88xE7lgNFWWqqwzDsDVS0D5SfFTLj2UcVHCyth4rae6KrwDsoA9hje46ySxCTPdMarVc66CbwkXt/6sDIzISwiVUEL5BqhSwoQwCrWFN2cUcQHslw0arLibbiHDqJypklx268dMgt6L8U5y31/3g0znOG/943ATK8SscpOEAH98Uu67YIXVzyusl74S9LyIBcGy/Nr0gpd1q82GDoBey3l2QTgSEIkxgYT1ovIdMB5BhzghY7C3MHHrg4EBZf0fulTFEL4BFWiNlkn94EH+P2DB0CGOQwUY8kmqfgHa+weTLkurrTo=
+iv: erbMJxj4sTil+OqttmLZyQ==
+signature: 26244d481ea9fd2ad41a2f7f010e79441a4d697f
+```
+###### 返回
+```
+{
+	"status": 1,
+	"message": "授权成功",
+	"data": {
+		"openId": "oAYBW48GYNwY9uBtKwiBbFlr7QMk",
+		"nickName": "saruri",
+		"gender": 1,
+		"language": "zh_CN",
+		"city": "",
+		"province": "艾哈迈达巴德",
+		"country": "印度",
+		"avatarUrl": "https:\/\/wx.qlogo.cn\/mmopen\/vi_32\/Q0j4TwGTfTJOWtu6k1mkCeux1mDS8VsJdhWbPH0EBdeS3dSafRnsmfR9guLUriceicw4rDEQeUU65ic95pDLyial2g\/132",
+		"watermark": {
+			"timestamp": 1576546139,
+			"appid": "wx6ec9bd4ebe47bea4"
+		},
+		"session3rd": "ZmFUTnJaRnRuSllS",
+		"token": "ZmFUTnJaRnRuSllS",
+		"openid": "oAYBW48GYNwY9uBtKwiBbFlr7QMk",
+		"oauth_token": "73ff63c962778000c22a20fd04ca17cb",
+		"oauth_token_secret": "36e81fbe460825aa850018c5022411a4",
+		"uid": 28,
+		"is_new_user": "old user"
+	}
+}
+# oauth_token token 
+# oauth_token_secret token所需要的秘钥
+# 请求都附带这两个 可以为get 也可以post
+# 地址 http://192.168.0.168:8015/
+```
+
+#### 小程序授权 |API| ==/Oauth/wx_login==
+
+###### 传递参数
+参数名称|参数说明
+---|---
+wxapp_id|小程序id
+code|获取openid等用
+user_info|核对信息用
+encrypted_data|加密数据核对用
+iv|计算偏移
+password|用户密码
+signature|签名
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码 一般都是 0失败 1成功
+msg|提示信息
+data|返回的具体数据
+
+```
+data返回的数据中 uid 用户id,is_new_user: 是否新注册用户 openId:openId,
+session3rd 准备废弃
+token 废弃
+剩下的是 微信过来的用户数据 
+
+```
+---
+#### 用户登录 |API| /Oauth/authorize
+
+
+
+######  传递参数
+参数名称|参数说明
+---|---
+login|登陆参数，支持 email，uname，phone三种登陆名
+password|用户密码
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码，0代表失败，1代表成功
+msg|消息
+uid|登陆成功后的用户  uid
+oauth_token|后续API需要传递的  token
+oauth_token_secret|和   token成对传输的  token密钥
+
+
+---
+#### 用户退出登录 |API|/Oauth/logout
+
+######  传递参数
+参数名称|参数说明
+---|---
+login|退出的用户，支持 uid，uname，phone，email
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|xxx状态码，1退出成功，0退出失败
+msg|消息
+
+---
+##### 获取手机验证码|API|（仅用于注册用户）| /Oauth/sendCodeByPhone
+######  传递参数
+参数名称|参数说明
+---|---
+login|该字段可以是四个类型 1.UID，2.email，3.phone，4.uname
+
+###### 返回字段
+字Y名称|字段说明
+---|---
+status|状态码
+message|服务端消息
+###### 状态码参数：
+状态码|状态码说明
+---|---
+1|发送成功
+0|用户没有绑定手机号码或者用户不存在
+-1|发送短信发生了错误，具体看  message
+
+---
+#### 校验手机验证码是否正确|API|/Oauth/checkCodeByPhone
+
+######  传递参数
+参数名称|参数说明
+---|---
+login|该字段可以是四个类型 1.UID，2.email，3.phone，4.uname
+code|验证码
+
+###### 返回字段
+字Y名称|字段说明
+---|---
+status|状态码
+message|消息
+
+###### 状态码参数：
+状态码|状态码说明
+---|---
+1|修改成功
+0|用户不存在或者没有绑定手机号码
+-1|验证码不能为空
+-2|密码达不到要求，具体看  message
+-3|发送短信失败，具体看  message
+-4|修改失败
+
+---
+##### 保存用户新密码|API|/Oauth/saveUserPasswordByPhone
+######  传递参数
+参数名称|参数说明
+---|---
+login|用户字段，支持 uid，email，phone，uname
+password|要保存的用户密码
+code|验证码
+
+###### 返回字段
+字Y名称|字段说明
+---|---
+status|状态码
+message|消息
+
+###### 状态码参数：
+状态码|状态码说明
+---|---
+1|修改成功
+0|用户不存在或者没有绑定手机号码
+-1|验证码不能为空
+-2|密码规范，具体看  message
+-3|验证码错误，具体看  message
+-4|修改失败
+
+
+---
+#### 发送注册验证码|API|/Oauth/send_register_code
+
+######  传递参数
+参数名称|参数说明
+---|---
+phone|手机号码
+
+###### 返回字段
+字Y名称|字段说明
+---|---
+status|状态码
+msg|消息
+
+
+###### 状态码参数：
+状态码|状态码说明
+---|---
+0|失败
+1|成功
+
+
+---
+#### 判断手机注册验证码是否正确 |API|/Oauth/check_register_code
+
+######  传递参数
+参数名称|参数说明
+---|---
+phone|手机号码
+regCode|验证码
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码0错误 1正确
+msg|消息
+
+
+---
+#### 注册上传头像|API|/Oauth/register_upload_avatar
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态，0失败，1成功
+msg|消息
+data|头像数据信息
+
+
+---
+#### 注册接口 |API|/Oauth/register
+######  传递参数
+参数名称|参数说明
+---|---
+phone|手机号码
+regCode|验证码
+uname|用户名
+sex|性别
+password|密码
+avatar_url|头像图片地址
+avatar_width|头像图片宽度
+avatar_height|头像图片高度
+
+
+
+
+###### 第三方登录注册必要信息：
+信息名称|说明
+---|---
+access_token|第三方  token'
+refresh_token|校验值
+type|平台类型
+type_uid|第三方平台用户  id
+
+###### 返回参数
+status|状态码，0失败，1成功
+---|---
+msg|消息
+oauth_token|用户  token
+oauth_token_secret|用户密钥
+uid|用户  uid
+
+
+
+
+---
+#### 记录或获取第三方登录接口获取到的信息|API|/Oauth/get_other_login_info
+######  传递参数
+参数名称|参数说明
+---|---
+type|帐号类型
+type_uid|第三方用户标识
+access_token|第三方 access token
+refresh_token|第三方 refresh token（选填，根据第三方返回值）
+expire_in|过期时间（选填，根据第三方返回值）
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态 0失败，成功无返回
+msg|消息
+oauth_token|用户  token'
+oauth_token_secret|用户 token密钥
+uid|用户  uid
+
+
+
+
+---
+#### 绑定第三方帐号，生成新账号|API|/Oauth/bind_new_user
+######  传递参数
+参数名称|参数说明
+---|---
+uname|用户名
+password|用户密码
+type|帐号类型
+type_uid|第三方用户标识
+access_token|第三方 access token
+refresh_token|第三方 refresh token（选填，根据第三方返回值）
+expire_in|过期时间（选填，根据第三方返回值）
+
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态 0失败，成功无返回
+msg|消息
+oauth_token|用户  token'
+oauth_token_secret|用户 token密钥
+uid|用户  uid
+
+
+
+
+---
+#### 获取邮箱验证码：|API|/Oauth/getEmailCode
+
+######  传递参数
+
+参数名称|参数说明
+---|---
+email|电子邮箱地址
+notreg|注册不传值，其他获取邮箱验证码需要传固定值  “1”
+
+返回 参数说明：
+参数名称|参数说明
+---|---
+status|状态码
+message|服务器返回的消息
+--状态码说明：
+状态码|状态码说明
+---|---
+1|获取成功
+0|email地址不合法
+-1|该邮箱已经存在，无法获取
+-2|发送验证码错误（具体错误看 message字段信息）
+
+
+
+---
+#### 校验验证码是否正确|API|/Oauth/hasCodeByEmail
+######  传递参数
+参数名称|参数说明
+---|---
+email|邮箱地址
+code|验证码
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码
+message|消息
+
+
+###### 状态说明：
+状态名称|状态说明
+---|---
+0|不合法的 E-mail地址
+-1|验证码不能为空
+-2|服务器消息，参考  message
+1|正确~
+
+
+
+---
+#### 用户 email注册接口|API|/Oauth/signUp2Email
+
+######  传递参数
+参数名称|参数说明
+---|---
+email|邮箱地址
+username|用户名
+password|用户密码
+code|验证码
+picurl|头像地址
+picwidth|头像宽度
+picheight|头像高度
+sex|性别，0，未知性别，1，男，2女
+
+
+
+###### 返回字段信息：
+字Y名称|字段说明
+---|---
+status|状态码
+message|消息
+msg|当 message不存在的时候存在的字段，里面存储的是错误消息
+oauth_token|用户  token
+oauth_token_secret|用户   token校验值
+uid|用户  UID
+
+###### 状态码说明：
+状态码|状态码说明
+---|---
+1|注册成功
+0|不合法的 E-mail地址，如果不存在 message，那么 msg是错误消息，标识
+在登陆步骤出错
+-1|验证码不能为空
+-2|该邮箱用户已经存在，无法注册
+-3|该用户名已经被注册
+-4|密码非法，只能是大小写英文和数字组成
+-5|密码太短，最少需要 6位
+-6|密码太长，最多 15位
+-7|发送验证码过程的错误信息，具体消息看  message
+-8|注册失败
+
+
+
+
+
+
+
+
+---
+#### 邮箱找回密码|API|/Oauth/findPassword2Email
+
+###### 传递参数
+参数名称|参数说明
+---|---
+email|邮箱地址
+password|新密码
+code|验证码
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码
+message|消息
+
+
+###### 状态码参数：
+状态码|状态码说明
+---|---
+1|找回并重置密码成功
+0|不是合法的 E-Mail地址
+-1|验证码为空
+-2|用户不存在
+-3|密码非法，只能是大小写英文和数字组成
+-4|密码太短，最少需要 6位
+-5|密码太长，最多 15位
+-6|验证码发送错误，具体看 message信息
+-7|找回密码失败
+
+
+
+
+
+
+
+
+---
+#### 邮箱允许后缀接口 |API|/Oauth/getEmailSuffix
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码返回  2表示无邮箱后缀限制返回  1，表示有限制
+message|状态消息
+data|如果 status为 1，这该这段存储的是允许的邮箱格式后缀
+
+
+---
+#### 意见反馈接口|API|/System/sendFeeedback
+
+######  传递参数
+参数名称|参数说明
+---|---
+content|反馈内容
+uid|非必传参数，只是用于系统自动获取失败的时候的保险措施，建议传递
+
+###### 返回信息：
+参数名称|参数说明
+---|---
+status|状态码
+msg|错误消息
+
+###### 状态码参数：
+状态码|状态码说明
+---|---
+1|成功
+0|缺少用户标识
+-1|没有反馈内容
+-2|反馈内容超出 500字
+-3|反馈写入数据库失败
+
+
+---
+
+#### 获取关于我们 HTML信息|URL/Public/showAbout
+
+
+---
+#### 获取 ==文旅库== application幻灯数据|API|/Public/getSlideShow
+
+###### 返回参数
+字Y名称|字段说明
+---|---
+title|标题名称
+image|图片地址
+type|点击事件类型
+data|配合点击事件类型的数据
+
+###### 点击事件类型：（需要的数据在 data中）
+
+类型名称|类型说明
+---|---
+false|该字段表示点击图片无任何事件，只是展示图片即可
+url|表示点击图片调转外部url
+weiba|标识点击后跳转到 data中的微吧 ID对应的微吧
+post|标识，点击图片跳转到微吧中的一个帖子中
+weibo|标识，点击轮播跳转到该微博的详情页
+topic|话题，表示点击后到某话题下
+channel|频道，点击到达某频道页面
+user|用户，点击跳转到对应的用户主页
+
+
+
+
+---
+#### 获取 ==文旅库== 一级分类|API|/Public/getCategory
+###### 返回参数
+字Y名称|字段说明
+---|---
+user_category_id|分类id
+title|分类名称
+sort|排序值
+pid|父级id
+attach|图标url
+
+```
+第一行为不限 第二行开始是数据 
+["\u4e0d\u9650",{"user_category_id":125,"title":"\u6301\u8bc1\u5bfc\u6e38"]
+
+```
+---
+#### 获取 ==信息广场微博== 一级分类|API|/Public/getCategoryWeibo
+###### 返回参数
+字Y名称|字段说明
+---|---
+user_category_weibo_id|分类id
+title|分类名称
+sort|排序值
+pid|父级id
+attach|图标url
+
+---
+#### 获取 ==信息广场微博== 二级分类|API|/Public/getCategoryWeiboSub
+
+######  传递参数
+参数名称|参数说明
+---|---
+pid|父级id
+
+
+###### 返回参数
+字Y名称|字段说明
+---|---
+user_category_weibo_id|分类id
+title|分类名称
+sort|排序值
+pid|父级id
+attach|图标url
+
+
+---
+#### 获取 ==信息广场== 幻灯数据|API|/Public/getSlideShowSquare
+
+###### 返回参数
+字Y名称|字段说明
+---|---
+image|图片地址
+url|跳转链接
+rank|排序等级
+
+---
+#### 获取 ==公告== |API|/Public/getAnnounce
+
+###### 传递参数
+参数名称|参数说明
+---|---
+limit|返回数据条数 可选  默认为5
+
+###### 返回参数
+字Y名称|字段说明
+---|---
+id|公告id
+title|公告标题
+sort|排序等级
+mtime|时间 
+uid|发布者id
+
+
+
+---
+#### 获取 socket地址|API|/Message/getSocketAddress
+>（如果没有配置，那么可能返回空或者  null）
+
+###### 返回参数
+参数名称|参数说明
+---|---
+socketaddres|socket地址
+
+
+
+
+---
+#### 获取用户信息|API|/Message/getUserInfo
+
+######  传递参数
+参数名称|参数说明
+---|---|
+uid|用户  uid
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码
+msg|消息
+uname|用户名
+avatar|用户头像
+intro|用户简介
+
+
+
+
+###### 状态码参数：
+参数名称|参数说明
+---|---
+-1|没有传递  uid
+-2|用户不存在
+1|获取成功
+
+
+
+
+---
+#### 获取用户头像|API|/Message/getUserFace
+
+######  传递参数
+参数名称|参数说明
+---|---
+uid|需要获取的用户 UID，如果没有传，则获取自己的头像
+method|获取头像的模式，可选值[stream, url, redirect],如果没有传，则，默认 stream直接输出用户头像数据,stream：输出 image图片,url：返回头像地址,redirect：重定向到头像地址
+size|获取头像的尺寸，可选值[original, big, middle, small],如果没有传递此参数，默认  big
+original：原始图像大小,big：大图,middle：中图,small：小图
+
+###### 错误消息
+
+参数名称|参数说明
+---|---
+Status|状态
+Msg|消息
+Url|头像地址（仅模式为 url的时候有）
+
+
+###### 状态：
+0|失败
+1|成功（只有模式为 url的时候发送）
+
+
+---
+#### 获取附件信息 |API|/Message/getAttach
+
+###### 参数传递
+参数名称|参数说明
+---|---
+hash|必须，需要获取的附件 hash值
+method|可先，选择取得资源的方式,可以不传，默认是  stream,stream：直接输出附件资源,url：返回资源 url地址,redirect：重定向到资源地址上
+
+###### 返回 参数说明
+参数名称|参数说明
+---|---
+status|状态
+msg|消息
+url|模式为 url的时候返回的字段
+
+
+###### 状态说明：
+状态名称|状态说明
+---|---
+1|成功（仅模式为 url的时候）
+-1|没有传递需要获取的附件  ID
+-2|没有正确的传递获取模式
+-3|没有这个附件
+
+
+---
+上传图片、语音、位置图片
+#### 上传图片|API|/Message/uploadImage
+
+#### 上传语音|API|/Message/uploadVoice
+
+
+#### 位置图片|API|/Message/uploadLocationImage
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码，标识当前状态
+msg|消息
+list|数组，包含了上传的文件加密信息列表
+
+###### 状态说明：
+状态名称|状态说明
+---|---
+0|上传失败
+-1|没有上传的图片
+1|上传成功
+
+
+---
+#### 获取消息未读数量：|API|/Message/unreadcount
+
+###### 返回参数
+参数名称|参数说明
+---|---
+comment|评论未读条数
+atme|at我的数量
+digg|赞了我的数量
+follower|新关注人
+weiba|微吧
+
+
+
+
+
+---
+#### 获取聊天信息|API|/Message/get_list_info
+
+######  传递参数
+参数名称|参数说明
+---|---
+list_id|聊天  ID
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态
+room_type|聊天类型， chat，group两种
+memebrs|成员
+
+
+
+---
+#### 判断是否有发私信的权限|API|/Message/can_send_message
+
+######  传递参数
+参数名称|参数说明
+---|---
+user_id|目标用户  uid
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态 0不可以发，1可以发
+msg|消息
+
+
+
+---
+#### 获取当前用户聊天列表|API|/Message/get_message_list
+
+######  传递参数
+type|
+order|排序方式，时间正序或者时间倒序，固定值 ASC或者  DESC
+
+==
+
+---
+#### 获取各个消息未读数量|API|/Message/unreadcount
+
+####### 返回的参数
+参数名称|参数说明
+---|---
+comment|评论我的未读消息数量
+atme|xAt @我的消息数量
+digg|赞我的消息数量
+follower|新关注我的人数
+weiba|微吧关注数量
+
+
+
+==
+
+---
+#### 获取群聊信息|API|/Message/get_list_info
+
+###### 传递参数
+参数名称|参数说明
+---|---
+list_id|群聊  ID
+
+###### 返回参数
+参数名称|参数说明
+---|---
+memebrs|成员
+room_type|房间类型
+status|状态
+
+
+==
+
+---
+#### 判断是否有发私信的权限|API|/Message/can_send_message
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|目标用户  UID
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态
+msg|消息
+==
+
+---
+#### 获取当前用户聊天列表|API|/Message/get_message_list
+
+###### 返回列表参数
+参数名称|参数说明
+---|---
+from_uid|对象用户  UID
+from_uname|对象用户用户名
+from_face|对象用户头像
+timestmap|更新时间
+ctime|创建时间
+with_uid|自己的  UID
+with_uid_userinfo|资料
+
+
+
+
+#### 上传自定义封面 |API|/User/uploadUserCover
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态
+msg|说明
+image|封面地址
+
+###### 状态说明：
+状态名称|状态说明
+---|---
+-1|用户没有登陆
+-2|没有上传文件
+1|上传成功
+
+
+
+
+
+---
+#### 用户个人主页|API|/User/show
+
+######  传递参数
+参数名称|参数说明
+---|---
+num|粉丝等数量，默认不传为 5个
+user_id|用户  uid
+uname|用户名
+
+
+###### 返回参数
+
+参数名称|参数说明
+---|---
+status|状态码，0标识错误
+msg|消息
+
+==
+
+---
+#### 获取用户勋章|API|/User/get_user_medal
+
+###### 传递参数:
+参数名称|参数说明
+---|---
+uid|获取的用户  UID
+uname|用户用户名
+
+（用户 UID和 username二选一）
+
+###### 返回列表中的参数
+参数名称|参数说明
+---|---
+id|勋章  ID
+name|勋章名称
+desc|勋章描述
+src|勋章大图地址
+small_src|勋章小图地址
+share_card|耀卡片地址
+
+==
+
+---
+#### 获取粉丝列表|API|/User/user_follower
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  UID
+uname|用户名
+key|搜索关键词
+max_id|上次返回的最后一条关注  ID
+count|粉丝个数
+
+```
+以上参数均为可选，需要的时候用，
+max_id用于分页加载更多
+```
+###### 返回参数
+
+参数名称|参数说明
+---|---
+follow_id|关注  ID
+user_group|用户组
+Uid|用户  UID
+Uname|用户用户名
+Intro|用户简介
+Avatar|用户头像
+follow_status|关注状态
+
+==
+
+---
+#### 用户关注列表|API|/User/user_following
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  UID
+uname|用户用户名
+key|搜索关键词
+max_id|上一次返回的最后一个关注  ID
+count|关注个数
+
+###### 返回参数
+参数名称|参数说明
+---|---
+follow_id|关注  ID
+user_group|用户组
+Uid|用户  UID
+Uname|用户用户名
+Intro|用户简介
+Avatar|用户头像
+follow_status|关注状态
+
+==好友列表
+
+---
+#### 用户关注列表|API|/User/user_friend
+
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  UID
+uname|用户用户名
+key|搜索关键词
+max_id|上一次返回的最后一个关注  ID
+count|关注个数
+
+
+
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+follow_id|关注  ID
+user_group|用户组
+Uid|用户  UID
+Uname|用户用户名
+Intro|用户简介
+Avatar|用户头像
+follow_status|关注状态
+
+---
+#### 按字母返回用户好友列表(相互关注)|API|/User/user_friend_by_letter
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  UID
+uname|用户用户名
+key|搜索关键词
+max_id|上一次返回的最后一个关注  ID
+count|关注个数
+
+
+
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+follow_id|关注  ID
+user_group|用户组
+Uid|用户  UID
+Uname|用户用户名
+Intro|用户简介
+Avatar|用户头像
+follow_status|关注状态
+
+---
+#### 用户相册|API|/User/user_photo
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  UID
+uname|用户名
+max_id|上次返回的最后一条的附件  ID
+count|照片个数
+
+###### 返回参数
+参数名称|参数说明
+---|---
+image_id|附件  ID
+image_url|图片  url
+
+
+
+---
+#### 用户视频|API|/User/user_video
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  UID
+uname|用户用户名
+max_id|上次返回的最后一条的  ID
+count|获取的视频个数
+
+###### 返回的参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+video_id|视频  ID
+flashimg|缩略图
+transfering|未知使用
+flashvar|视频地址
+
+
+
+---
+#### 获取用户黑名单|API|/User/user_blacklist
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条的  ID
+count|获取的个数
+
+###### 返回的参数
+参数名称|参数说明
+---|---
+uid|用户  UID
+uname|用户名
+intro|用户简介
+avatar|用户头像
+
+---
+#### 将指定用户添加到当前用户黑名单|API|/User/add_blacklist
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|要添加的用户  UID
+
+###### 返回的参数
+参数名称|参数说明
+---|---
+status|状态吗，1为成功，0为失败
+msg|消息
+
+---
+#### 将指定用户移除黑名单|API|/User/remove_blacklist
+
+参数名称|参数说明
+---|---
+user_id|要移除的用户  UID
+
+###### 返回 参数说明
+参数名称|参数说明
+---|---
+status|状态码，1为成功，0为失败
+msg|消息
+
+---
+#### 上传用户头像|API|/User/upload_avatar
+
+######  传递参数无参数，将图片使用 POST模拟表单提交到该地址
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码，1成功，0失败
+msg|消息
+
+---
+#### 获取地区列表|API|/User/get_area_list
+
+###### 返回参数
+参数名称|参数说明
+---|---
+city_id|城市  ID
+city_name|城市名称
+
+---
+#### 修改用户信息|API|/User/save_user_info
+
+###### 传递参数
+参数名称|参数说明
+---|---
+uname|用户名
+sex|1-男，2-女
+intro|用户简介
+city_id|地区  ID
+password|新密码
+old_password|旧密码
+tags|标签，传递标签 ID，多个之间用英文半角“”,隔开
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码，1成功，0失败
+msg|消息
+>这个接口可以组合使用更新多种数据，可以组合使用达到多个接口效果
+==
+
+---
+#### 发送绑定手机的短信验证码|API|/User/send_bind_code
+
+###### 传递参数
+参数名称|参数说明
+---|---
+phone|要发送验证码的手机号码
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态，0失败，1成功
+msg|消息
+
+
+---
+#### 执行绑定手机号码API|/User/do_bind_phone
+
+###### 传递参数
+参数名称|参数说明
+---|---
+phone|手机号码
+code|验证码
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码，0失败，1成功
+msg|消息
+
+---
+#### 获取用户隐私设置|API|/User/user_privacy
+
+###### 返回参数
+参数名称|参数说明
+---|---
+messge|是否可以发送消息
+space|是否可以访问个人空间
+comment_weibo|是否可以评论微博
+
+---
+#### 设置用户隐私设置|API|/User/save_user_privacy
+
+###### 传递参数
+参数名称|参数说明
+---|---
+message|1，可以私心，0不可以
+comment_weibo|1：可以评论微博，0不可以
+space|1：可以访问空间，0不可以
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码
+msg|消息
+
+
+
+---
+#### 关注一个用户|API|/User/follow
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|要关注的用户  UID
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+
+---
+#### 取消关注一个用户|API|/User/unfollow
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|要取消关注的用户  UID
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|1：成功，0：失败
+status|状态
+msg|消息
+
+---
+#### 用户第三方帐号绑定情况（含手机）|API|/User/user_bind
+
+###### 返回参数
+参数名称|参数说明
+---|---
+type|平台类型
+name|平台名称
+isBind|是否绑定
+
+
+
+---
+#### 解绑第三方账号（含手机）|API|/User/unbind
+
+###### 传递参数
+参数名称|参数说明
+---|---
+type|平台类型
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码
+msg|消息
+
+
+
+---
+#### 绑定第三方账号|API|/User/bind_other
+
+###### 传递参数
+参数名称|参数说明
+---|---
+type|平台类型
+type_uid|第三方用户标识
+access_token|第三方 access token
+refresh_token|第三方 refresh token（选填，根据第三方返回值）
+expire_in|过期时间（选填，根据第三方返回值）
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码
+msg|消息
+
+
+---
+#### 获取全部勋章|API|/Medal/getAll
+
+###### 返回参数
+参数名称|参数说明
+---|---
+id|勋章  ID
+name|勋章名称
+desc|勋章说明
+icon|勋章  icon
+show|点击后展示的图片
+
+---
+#### 取得用户已经获得的勋章|API|/Medal/getUser
+
+###### 请求参数：
+参数名称|参数说明
+---|---
+uid|要取得的用户勋章的用户 uid，默认取得当前登录用户可不传
+
+###### 返回参数
+
+参数名称|参数说明
+---|---
+id|勋章  ID
+name|勋章名称
+desc|勋章说明
+icon|勋章  icon
+show|点击后展示的图片
+
+
+---
+---
+---
+# 任务 API-------------------------
+#### 获取每日任务|API|/Task/daily
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+name|每日任务名称
+desc|描述
+status|状态，1为完成，0，为未完成
+progress_rate|如果是多动作任务，这个字段是尺寸动作进度
+exp|奖励的经验
+score|奖励的积分
+icon|勋章，只有有勋章的任务才会显示
+
+>ps：完成任务查询状态后悔自动领取奖励，和发布动态
+
+---
+#### 主线任务 |API|/Task/mainLine
+
+###### 返回参数
+参数名称|参数说明
+---|---
+name|每日任务名称
+desc|描述
+status|状态，1为完成，0，为未完成
+progress_rate|如果是多动作任务，这个字段是尺寸动作进度
+exp|奖励的经验
+score|奖励的积分
+
+icon|勋章，只有有勋章的任务才会显示
+
+
+---
+#### 副本任务|API|/Task/custom
+
+###### 返回参数
+参数名称|参数说明
+---|---
+name|任务名称
+desc|任务说明
+exp|经验
+score|积分
+iscomplete|是否完成
+surplus|任务剩余允许的领取数，无限制为  null
+cons|任务条件列表
+icon|勋章，无勋章任务，无此字段
+
+###### 任务条件列表详情：
+参数名称|参数说明
+---|---
+desc|条件要求
+status|是否满足（完成）
+
+
+# 礼物商城 |API|===
+
+
+
+
+---
+#### 获取全部礼物列表|API|/Gift/getList
+
+######  传递参数
+参数名称|参数说明
+---|---
+page|页码，默认值是 1页
+cate|分类，值只有 1和 2，1代表虚拟礼物，2代表实体礼物，不传代表全部
+num|每页返回的数据条数默认  20条
+
+
+###### 返回字段
+字Y名称|字段说明
+---|---
+count|数据总条数
+totalPages|总页数
+nowPage|当前页码
+data|数据
+
+###### 数据字段说明
+
+id|礼物  ID
+---|---
+name|礼物名称
+brief|礼物简介
+info|礼物详情
+image|图片地址
+score|所需积分
+stock|库存量
+max|限购数量
+time|时间戳
+cate|分类
+
+
+---
+
+#### 获取礼物详细信息 |API|/Gift/getInfo
+
+###### 请求参数：
+参数名称|参数说明
+---|---
+id|礼物  ID
+name|礼物名称
+brief|礼物简介
+info|礼物详情
+image|图片地址
+score|所需积分
+stock|库存量
+max|限购数量
+time|时间戳
+cate|分类
+count|兑换人数统计
+
+ ---
+#### 兑换礼物 |API|/Gift/buy
+
+
+###### 请求参数：
+参数名称|参数说明
+---|---
+id|礼物  ID
+uid|赠送的人的  UID
+num|兑换的数量
+name|用户真实姓名
+phone|联系方式
+addres|邮寄地址
+say|祝福语
+type|类型
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码
+messge|消息
+
+###### 状态码说明：
+
+状态码|状态说明
+---|---
+1|兑换成功
+0|未登录
+-1|兑换的该物品不存在
+-2|赠送的用户不存在
+-3|已经赠送过
+-4|积分不足
+-5|赠送数量不得少于 1份
+-6|超出限购数量
+-7|超出库存数量
+-8|没有输入祝福语
+-9|没有输入地址
+-10|赠送类型错误，只有三个值 1,你们赠送，2公开赠送，3私下赠送
+-11|数据库的错误，具体看  message
+-12|用户真实姓名不能为空
+-13|用户联系方式不能为空
+
+
+
+
+
+---
+#### 取得用户获得/赠送记录 |API|/Gift/getLog
+
+###### 请求参数：
+参数名称|参数说明
+---|---
+type|请求类型 0：获得的礼物 1：赠送的礼物
+page|页数
+
+###### 返回字段
+字Y名称|字段说明
+---|---
+count|数据总条数
+totalPages|总页数
+nowPage|当前页码
+data|数据
+
+
+###### 数据字段说明
+id|礼物  ID
+---|---
+name|礼物名称
+brief|礼物简介
+info|礼物详情
+image|图片  ID
+image_src|图片地址
+score|所需积分
+stock|库存量
+max|限购数量
+cate|分类
+inUserName|被赠送人的用户名称
+outUserName|赠送人用户名称
+date|格式化后的时间
+say|祝福语
+
+
+---
+#### 礼物转赠|API|/Gift/transfer
+
+######  传递参数
+参数名称|参数说明
+---|---
+id|记录 ID，请参考我收到的礼物中 logId字段
+uid|被赠送的人的  UID
+say|祝福语
+num|转赠数量
+type|类型，只有三个，1：匿名赠送 2：公开赠送 3：私密赠送
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态 0为失败，1为成功！
+message|消息
+
+# FindPeopleApi 上报用户位置地理信息
+
+---
+#### 上报用户位置地理信息|API|/FindPeople/updateUserLocation
+
+######  传递参数
+参数名称|参数说明
+---|---
+latitude|维度
+longitude|经度
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态，1，是更新成功，0，失败，或者位置没有变化
+message|消息
+
+# 积分排行榜
+---
+#### |API|/FindPeople/ FindPeople
+
+###### 返回参数
+参数名称|参数说明
+---|---
+rank|排名
+lists|排名数据
+uname|用户名
+avatar|头像
+
+###### 排名数据
+参数名称|参数说明
+---|---
+uid|用户  UID
+rank|排名
+uname|用户名
+avatar|头像
+weibo_count|微博统计
+
+
+---
+#### 用户勋章排行|API|/FindPeople/rank_medal
+
+###### 返回参数
+参数名称|参数说明
+---|---
+uname|用户名
+avatar|用户头像
+rank|排名
+lists|其他排名数据
+
+###### 排名数据
+参数名称|参数说明
+---|---
+uid|x用户  uid
+rank|排名
+mcount|勋章统计
+uname|用户名
+avatar|用户头像
+
+
+
+
+---
+#### 首页找人-搜索用户|API|/FindPeople/search_user
+
+###### 传递参数
+参数名称|参数说明
+---|---
+key|关键词
+
+max_id|上次返回的最后一个用户  UID
+count|获取的个数
+
+
+
+###### 返回的参数
+参数名称|参数说明
+---|---
+uid|用户  UID
+uname|用户名
+avatar|用户头像
+intro|用户简介
+follow_status|关注状态
+
+
+---
+#### 获取用户可选所有标签|API|/FindPeople/get_user_tags
+
+###### 返回参数
+参数名称|参数说明
+---|---
+title|标签名称
+child|子节点
+
+=---
+#### 按标签搜索用户|API|/FindPeople/search_by_tag
+
+###### 传递参数
+参数名称|参数说明
+---|---
+tag_id|标签  ID
+max_id|上次返回的最后一个用户  ID
+count|获取的数量
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码
+msg|消息
+uid|用户  UID
+uname|用户名
+avatar|用户头像
+intro|用户简介
+follow_status|关注状态
+
+
+---
+#### 获取地区(按字母)|API|/FindPeople/get_user_city
+
+###### 返回参数
+参数名称|参数说明
+---|---
+city_id|城市  id
+city_name|城市名称
+
+
+---
+#### 按地区搜索用户|API|/FindPeople/search_by_city
+
+###### 传递参数
+参数名称|参数说明
+---|---
+city_id|城市  ID
+max_id|上次返回最后的用户  UID
+count|获取的个数
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态
+msg|消息
+uid|用户  UID
+uname|用户名
+avatar|用户头像
+intro|用户简介
+follow_status|关注状态
+
+
+---
+#### 获取认证分类|API|/FindPeople/follow_status
+
+###### 返回参数
+参数名称|参数说明
+---|---
+verify_id|认证  ID
+title|认证名称
+
+
+
+
+---
+#### 按认证搜索用户|API|/FindPeople/search_by_verify
+
+###### 传递参数
+参数名称|参数说明
+---|---
+verify_id|认证类型  ID
+max_id|上次返回的最后一个用户  UID
+count|获取的个数
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态
+msg|消息
+id|认证id
+uid|用户  uid
+uname|用户名
+intro|用户简介
+avatar|用户头像
+follow_status|关注状态
+
+
+---
+#### 附近的人|API|/FindPeople/around
+
+###### 传递参数
+参数名称|参数说明
+---|---
+latitude|维度
+longitude|经度
+page|页码
+
+###### 返回参数
+参数名称|参数说明
+---|---
+totlaPages|总页数
+nowPage|当前页码
+data|附近的人用户数据
+
+
+###### 附近的人数据
+参数名称|参数说明
+---|---
+uid|用户  id
+username|用户名
+distance|距离，单位  m
+avatar|用户头像
+followStatus|关注状态
+intro|用户简介
+
+```
+考虑到统一命名风格 还是用下面的getUserByAround好记点
+```
+
+
+
+
+
+---
+#### 获取推荐用户|API|/FindPeople/getUserByRecommoned
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一个用户  UID
+count|获取的个数
+
+###### 返回参数
+参数名称|参数说明
+---|---
+totlaPages|总页数
+nowPage|当前页码
+data|推荐的用户数据
+
+
+###### 推荐用户数据
+参数名称|参数说明
+---|---
+uid|用户  id
+username|用户名
+avatar|用户头像
+followStatus|关注状态
+intro|用户简介
+
+---
+#### 获取人气用户|API|/FindPeople/getUserByHot
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一个用户  UID
+count|获取的个数
+
+###### 返回参数
+参数名称|参数说明
+---|---
+totlaPages|总页数
+nowPage|当前页码
+data|人气用户数据
+
+
+###### 推荐用户数据
+参数名称|参数说明
+---|---
+uid|用户  id
+username|用户名
+avatar|用户头像
+followStatus|关注状态
+intro|用户简介
+
+---
+
+#### 附近用户|API|/FindPeople/getUserByAround
+
+###### 传递参数
+参数名称|参数说明
+---|---
+latitude|维度
+longitude|经度
+page|页码
+
+###### 返回参数
+参数名称|参数说明
+---|---
+totlaPages|总页数
+nowPage|当前页码
+data|附近的人用户数据
+
+
+###### 附近的人数据
+参数名称|参数说明
+---|---
+uid|用户  id
+username|用户名
+distance|距离，单位  m
+avatar|用户头像
+followStatus|关注状态
+intro|用户简介
+
+---
+
+#### 获取最新用户|API|/FindPeople/getUserByNew
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一个用户  UID
+count|获取的个数
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+totlaPages|总页数
+nowPage|当前页码
+data|最新注册的人用户数据
+
+
+###### 最新注册的人数据
+参数名称|参数说明
+---|---
+uid|用户  id
+username|用户名
+distance|距离，单位  m
+avatar|用户头像
+followStatus|关注状态
+intro|用户简介
+
+
+---
+#### 置顶用户|API|/FindPeople/getUserByTop
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+id|认证id
+uid|用户  uid
+uname|用户名
+intro|用户简介
+avatar|用户头像
+follow_status|关注状态
+
+
+
+
+
+
+
+
+---
+#### 根据通讯录搜索用户|API|/FindPeople/search_by_tel
+
+###### 传递参数
+参数名称|参数说明
+---|---
+tel|x手机号码，多个用英文半角逗号“”,隔开。
+
+###### 返回参数
+参数名称|参数说明
+---|---
+tel|x手机号码
+uid|用户  id
+uname|用户名
+avatar|用户头像
+intro|用户简介
+follow_status|关注状态
+
+---
+#### 顶部广告|API|/FindPeople/top_ad
+
+###### 返回参数
+参数名称|参数说明
+---|---
+ad_id|广告  ID
+title|广告标题
+place|广告位置 0：中部，1：头部，2：左下，3：右下，4：底部，5：右上
+display_type|类型，1html，2代码，3轮播
+content|广告内容
+
+
+
+# Weibo微博---
+
+
+---
+#### 获取全站最新发布微博|API|/Weibo/public_timeline
+
+---
+#### 获取当前用户所关注的用户发布的微博|API|/Weibo/friends_timeline
+
+---
+#### 获取推荐最新发布微博|API|/Weibo/recommend_timeline
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条微博  ID
+count|获取的条数
+type|微博类型  'post','repost','postimage','postfile','postvideo'
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment| 
+comment_info|评论信息
+
+---
+
+#### 获取全站最新微博|API|/Weibo/getWeiboByNew
+```
+public_timeline 方法一致
+```
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条微博  ID
+count|获取的条数
+type|微博类型  'post','repost','postimage','postfile','postvideo'
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment| 
+comment_info|评论信息
+
+---
+#### 获取推荐微博|API|/Weibo/getWeiboByRecommend
+```
+recommend_timeline 方法一致
+```
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条微博  ID
+count|获取的条数
+type|微博类型  'post','repost','postimage','postfile','postvideo'
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment| 
+comment_info|评论信息
+
+---
+#### 获取热门微博|API|/Weibo/getWeiboByHot
+```
+参照几个统计字段的数字?
+comment_count 数
+comment_all_count 全部评论数
+digg_count 点赞数
+repost_count 分享数
+可以考虑着几个字段排序 构造微博 
+```
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条微博  ID
+count|获取的条数
+type|微博类型  'post','repost','postimage','postfile','postvideo'
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment| 
+comment_info|评论信息
+
+---
+#### 获取附近的人的微博|API|/Weibo/getWeiboByHot
+```
+计算附近的人 然后 获取他们的微博
+有现成的接口 然后按顺序读取微博
+api("Findpeople")->getUserByAround 
+得出
+uids
+每个人读取一条最新的微博 即可
+
+
+```
+
+###### 传递参数
+参数名称|参数说明
+---|---
+
+
+
+
+
+###### 传递参数
+参数名称|参数说明
+---|---
+latitude|维度
+longitude|经度
+max_id|上次返回的最后一条微博  ID
+count|获取的条数
+type|微博类型  'post','repost','postimage','postfile','postvideo'
+
+###### 返回参数
+参数名称|参数说明
+---|---
+totlaPages|总页数
+nowPage|当前页码
+data|附近的人微博数据
+
+###### data数据说明
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment| 
+comment_info|评论信息
+
+
+
+---
+#### 获取当前用户所关注频道分类下的微博|API|/Weibo/channels_timeline
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条微博  ID
+count|获取的条数
+type|微博类型  'post','repost','postimage','postfile','postvideo'
+cid|频道  ID
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment|
+comment_info|评论信息
+
+
+---
+#### 获取某个话题下的微博|API|/Weibo/topic_timeline
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条微博  ID
+count|获取的条数
+type|微博类型  'post','repost','postimage','postfile','postvideo'
+topic_name|话题名称
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment|
+comment_info|评论信息
+
+
+---
+#### 某条微博详细内容|API|/Weibo/weibo_detail
+
+###### 传递参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment|
+comment_info|评论信息
+digg_info|赞信息
+
+
+---
+#### 获取指定微博的评论列表|API|/Weibo/weibo_comments
+
+###### 传递参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+max_id|上次返回的最后一条评论  id
+count|要获取的评论条数
+###### 返回参数
+参数名称|参数说明
+---|---
+type|分享类型
+user_info|用户信息
+comment_id|评论  id
+content|评论内容
+ctime|评论时间
+digg_count|赞统计
+is_digg|是否已经赞过
+
+
+
+---
+#### 获取指定微博的赞过的人的列表|API|/Weibo/weibo_diggs
+
+###### 传递参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+max_id|上次返回的最后一条赞的  id
+count|获取赞的条数
+
+
+###### 返回的参数
+参数名称|参数说明
+---|---
+uname|用户名
+intro|用户简介
+avatar|用户头像
+follow_status|关注状态
+
+
+---
+#### 发布一条微博|API|/Weibo/post_weibo
+
+
+---
+#### 发布图片微博|API|/Weibo/upload_photo
+>需要提交图片文件
+
+
+---
+#### 发布视频微博|API|/Weibo/upload_video
+>需要提交视频文件
+
+###### 传递参数
+参数名称|参数说明
+---|---
+content|微博内容
+latitude|纬度
+longitude|经度
+address|具体位置
+from|来源(2-android 3-iphone)
+channel_category_id | 频道 ID(多个频道 ID之间用逗号隔开)
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态码，0为看错误，1成功
+msg|消息
+feed_id|发布成功的分享  id
+is_audit_channel|在发布到频道的时候返回的参数
+
+
+---
+#### 删除一条分享|API|/Weibo/del_weibo
+
+###### 传递参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|1成功，0失败
+msg|消息
+
+
+---
+#### 转发分享|API|/Weibo/repost_weibo
+
+###### 传递参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+content|内容
+latitude|纬度
+longitude|经度
+address|具体地址
+from|来源(2-android 3-iPhone)
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|1成功，0失败
+msg|消息
+feed_id|新分享  id
+
+
+---
+#### 评论一条分享|API|/Weibo/comment_weibo
+
+###### 传递参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+to_comment_id|回复评论（如果有）
+content|评论内容
+from|来源(2-android 3-iPhone)
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|状态
+msg|消息
+
+
+---
+#### 删除分享评论|API|/Weibo/delComment
+
+###### 传递参数
+参数名称|参数说明
+---|---
+commentid|评论  id
+
+###### 返回参数|xxx
+
+参数名称|参数说明
+---|---
+status|状态码
+message|消息
+
+
+###### 状态码
+状态码|状态说明
+---|---
+1|删除成功
+0|传入参数不合法
+-1|删除失败
+
+---
+#### 赞分享|API|/Weibo/digg_weibo
+
+
+
+---
+#### 取消赞分享|API|/Weibo/undigg_weibo
+
+###### 传递参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|1，成功 0失败
+msg|消息
+
+
+---
+#### 赞评论|API|/Weibo/digg_comment
+
+
+---
+#### 取消赞评论|API|/Weibo/undigg_comment
+
+###### 传递参数
+参数名称|参数说明
+---|---
+comment_id|评论  id
+
+###### 返回参数
+
+参数名称|参数说明
+---|---
+status|1，成功 0，失败
+msg|消息
+
+
+
+---
+#### 收藏分享|API|/Weibo/favorite_weibo
+
+
+---
+#### 取消收藏分享|API|/Weibo/unfavorite_weibo
+
+###### 传递参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|1：成功，0：失败
+msg|消息
+
+
+
+
+---
+#### 举报分享|API|/Weibo/denounce_weibo
+
+###### 传递参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+reason|举报原因
+from|来源(2-android 3-iphone)
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|1：成功，0：失败
+msg|消息
+
+
+
+
+---
+#### 获取某用户的微博|API|/Weibo/user_timeline
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  id
+uname|用户名
+max_id|上次返回的最后一条微博  ID
+count|需要获取的条数
+type|微博类型  'post','repost','postimage','postfile','postvideo'
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment|
+comment_info|评论信息
+
+
+---
+#### 用户收藏的微博|API|/Weibo/user_collections
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  id
+max_id|上次返回的最后一条收藏  ID
+count|微博条数
+type|'post','repost','postimage','postfile','postvideo'
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment|
+comment_info|评论信息
+
+
+---
+#### 按关键字搜索分享|API|/Weibo/weibo_search_weibo
+
+
+---
+#### 按话题搜索微博|API|/Weibo/weibo_search_topic
+
+
+---
+#### 搜索@最近联系人|API|/Weibo/search_at
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条  ID
+count|条数
+key|关键词
+type|微博类型  'post','repost','postimage','postfile','postvideo'
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment|
+comment_info|评论信息
+
+
+---
+#### 搜索话题|API|/Weibo/search_topic
+
+###### 传递参数
+参数名称|参数说明
+---|---
+key|关键字
+max_id|上次返回的最后一条话题  ID
+count|话题条数
+
+###### 返回参数
+参数名称|参数说明
+---|---
+topic_id|话题  id
+topic_name|话题名称
+
+
+---
+#### 提到用户的分享|API|/Weibo/user_mentions
+---
+#### 与我相关|API|/Weibo/user_related
+
+
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条  id
+获取的条数|count
+###### 返回参数
+
+参数名称|参数说明
+---|---
+feed_id|分享  ID
+uid|用户  id
+type|类型
+app|来源的类型
+publish_time|产生动态的时间
+form|来源
+comment_count|评论数
+repost_count|分享数
+comment_all_count|全部评论数目
+is_repost|转发数
+digg_count|喜欢数
+address|发布地址
+latitude|纬度
+longitude|经度
+source_info|资源数据
+user_info|用户信息
+can_comment|
+comment_info|评论信息
+
+
+
+
+---
+#### 获取当前用户收到的评论|API|/Weibo/user_comments_to_me
+
+
+---
+#### 获取当前用户发出的评论|API|/Weibo/user_comments_by_me
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条  id
+count|获取的数目
+
+###### 返回参数
+参数名称|参数说明
+---|---
+comment_id|评论  id
+feed_id|分享  id
+type|post
+content|内容
+ctime|时间
+from|来自网站
+user_info|用户信息
+feed_info|分享信息
+
+
+---
+#### 获取当前用户的收到的赞|API|/Weibo/user_diggs_to_me
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条  id
+要获取的条数|count
+
+###### 返回参数
+参数名称|参数说明
+---|---
+feed_id|分享  id
+type|post|
+content|赞了这条微博
+ctime|时间
+from|来自网站
+user_info|用户信息
+feed_info|分享信息
+
+
+---
+#### 获取热门话题|API|/Weibo/getHotTopic
+
+###### 返回参数
+参数名称|参数说明
+---|---
+topic_id|话题  id
+topic_name|话题名称
+count|x数量
+des|话题介绍
+note|
+pic|图片  id
+
+
+
+---
+#### 获取正在进行的话题|API|/Weibo/getNewTopic
+---
+#### 获取所有话题|API|/Weibo/all_topic
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条  id
+limit|需要获取的条数
+
+###### 返回参数
+参数名称|参数说明
+---|---
+topic_id|话题  id
+topic_name|话题名称
+count|数量
+des|话题介绍
+note|
+pic|图片  id
+
+>两个  ---#### |API|不同之处，all_topic返回的数据是多级，包含了热门和最新~
+
+---
+#### 获取分享限制字数|API|/Weibo/getWeiboStrMaxLength
+
+###### 返回参数
+参数名称|参数说明
+---|---
+num|分享内容限制的字数！
+
+
+# Weiba|API|
+
+---
+#### 帖子详情|API|/Weiba/post_detail
+
+###### 传递参数
+参数名称|参数说明
+---|---
+id|帖子  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+weiba|微吧数据
+user_info|用户数据
+from|来自  xxxx
+digg_count|赞统计
+is_digg|是否赞了
+digg_info|赞用户数据
+comment_info|评论数据
+
+
+---
+#### 获取  20条资源赞过的用户|API|/Weiba/digg_lists
+
+###### 传递参数
+参数名称|参数说明
+---|---
+post_id|帖子  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+uname|用户名
+intro|用户简介
+avatar|用户头像
+follow_status|关注状态
+
+
+---
+#### 获得微吧帖子  3G版本  url|API|/Weiba/get_weiba_url
+
+###### 传递参数
+参数名称|参数说明
+---|---
+id|帖子  id
+
+
+###### 返回参数
+参数名称|参数说明
+---|---
+url|3G地址
+
+
+
+---
+#### 获取微吧|API|/Weiba/weiba_detail
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  uid
+max_id|上次返回的最后一条  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+my|我的微吧列表
+recommend|推荐的微吧
+
+
+---
+#### 获取微吧信息|API|/Weiba/detail
+
+###### 传递参数
+参数名称|参数说明
+---|---
+id|微吧  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+error|错误消息
+follow|是否关注
+weiba_info|微吧详细
+weiba_post|帖子列表
+weiba_digest|精华数
+
+
+---
+#### 获取精华帖列表（用户）|API|/Weiba/detail_digest
+
+###### 传递参数
+参数名称|参数说明
+---|---
+weiba_id|微吧  ID
+user_id|用户  id
+
+###### 返回参数
+
+参数名称|参数说明
+---|---
+from|来源
+user_info|用户信息
+img|图片数组
+digg|赞？
+content|内容
+
+
+---
+#### 查找微吧|API|/Weiba/findWeiba
+
+###### 传递参数
+参数名称|参数说明
+---|---
+limit|获取推荐微吧的条数
+key|关键字
+max_id|上次返回的最后一条的  id
+count|获取的微吧个数
+
+
+###### 返回参数
+参数标题|参数说明
+---|---
+weiba_id|微吧  id
+cid|分类  id
+weiba_name|微吧名称
+uid|创建者  ID
+ctime|创建时间
+Logo|微吧  logo
+Intro|简介
+who_can_post|发帖权限，0：所有人，1：成员
+who_can_reply|回帖权限，0：所有人，1：成员
+fllower_count|成员数
+thread_count|帖子数
+admin_uid|吧主
+recomend|是否热门
+notify|通知
+
+>第一个数组是推荐，第二个是搜索的
+
+
+
+---
+#### 用户创建的圈子|API|/Weiba/weiba_creat_my
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  id
+limit|获取个数
+
+###### 返回参数
+参数标题|参数说明
+---|---
+weiba_id|微吧  id
+cid|分类  id
+weiba_name|微吧名称
+uid|创建者  ID
+ctime|创建时间
+Logo|微吧  logo
+Intro|简介
+who_can_post|发帖权限，0：所有人，1：成员
+who_can_reply|回帖权限，0：所有人，1：成员
+fllower_count|成员数
+thread_count|帖子数
+admin_uid|吧主
+recomend|是否热门
+notify|通知
+
+
+
+
+
+
+---
+#### 用户加入的圈子|API|/Weiba/weiba_join_my
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  id
+max_id|上次返回的最后一条的  id
+count|获取个数
+
+###### 返回参数
+参数标题|参数名称
+---|---
+weiba_id|微吧  id
+cid|分类  id
+weiba_name|微吧名称
+uid|创建者  ID
+ctime|创建时间
+Logo|微吧  logo
+Intro|简介
+who_can_post|发帖权限，0：所有人，1：成员
+who_can_reply|回帖权限，0：所有人，1：成员
+fllower_count|成员数
+thread_count|帖子数
+admin_uid|吧主
+recomend|是否热门
+notify|通知
+
+
+---
+#### 关注圈子|API|/Weiba/doFollowWeiba
+
+---
+#### 取消关注圈子|API|/Weiba/unFollowWeiba
+
+###### 传递参数
+参数名称|参数说明
+---|---
+user_id|用户  id
+weiba_id|微吧  ID
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+
+---
+#### 赞帖子|API|/Weiba/addPostDigg
+---
+#### 取消赞帖子|API|/Weiba/delPostDigg
+
+###### 传递参数
+参数名称|参数说明
+---|---
+row_id|帖子  id
+user_id|用户  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|0：失败，1：成功
+info|消息
+
+
+
+---
+#### 收藏帖子|API|/Weiba/favorite
+
+###### 传递参数
+参数名称|参数说明
+---|---
+post_id|帖子  id
+weiba_id|微吧  id
+post_uid|帖子发表用户  id
+user_id|用户  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+
+---
+#### 取消收藏帖子|API|/Weiba/unfavorite
+
+###### 传递参数
+
+参数名称|参数说明
+---|---
+post_id|帖子  id
+user_id|用户  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|0：错误，1：成功
+msg|消息
+
+
+
+---
+#### 获取推荐帖子话题等信息|API|/Weiba/recommend_topic
+
+###### 返回参数
+参数名称|参数说明
+---|---
+commend|推荐帖子列表
+my|我关注的微吧帖子
+
+
+
+---
+#### 搜索帖子话题信息|API|/Weiba/search_topic
+
+###### 传递参数
+参数名称|参数说明
+---|---
+key|关键词
+weiba_id|微吧  id
+
+###### 返回信息
+参数名称|参数说明
+---|---
+post_id|帖子  id
+weiba_id|微吧  ID
+post_uid|发布者  id
+Title|标题
+Content|内容
+post_time|发布时间
+From|发布来源
+reply_count|回复数
+read_count|阅读数
+last_reply_uid|最后加入者  id
+last_reply_time|最后回复时间
+Digest|全局精华，0：否，1：是
+lock|不允许回复 0：否，1：是
+Top|置顶，0：否，1：吧内，2：全局
+Recommend|是否为推荐
+feed_id|对应的方向  id
+reply_all_count|全部评论数目
+Attach|附件
+Praise|喜欢
+
+
+---
+#### 全部推荐帖子|API|/Weiba/recommend_all
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条  id
+weiba_id|微吧  id
+
+###### 返回信息
+参数名称|参数说明
+---|---
+post_id|帖子  id
+weiba_id|微吧  ID
+post_uid|发布者  id
+Title|标题
+Content|内容
+post_time|发布时间
+From|发布来源
+reply_count|回复数
+read_count|阅读数
+last_reply_uid|最后加入者  id
+last_reply_time|最后回复时间
+Digest|全局精华，0：否，1：是
+lock|不允许回复 0：否，1：是
+Top|置顶，0：否，1：吧内，2：全局
+Recommend|是否为推荐
+feed_id|对应的方向  id
+reply_all_count|全部评论数目
+Attach|附件
+Praise|喜欢
+
+
+---
+#### 全部帖子列表|API|/Weibo/post_all
+
+###### 传递参数
+参数名称|参数说明
+---|---
+weiba_id|微吧  id
+max_id|上次返回的最后一条的  id
+
+###### 返回信息
+参数名称|参数说明
+---|---
+post_id|帖子  id
+weiba_id|微吧  ID
+post_uid|发布者  id
+Title|标题
+Content|内容
+post_time|发布时间
+From|发布来源
+reply_count|回复数
+read_count|阅读数
+last_reply_uid|最后加入者  id
+last_reply_time|最后回复时间
+Digest|全局精华，0：否，1：是
+lock|不允许回复 0：否，1：是
+Top|置顶，0：否，1：吧内，2：全局
+Recommend|是否为推荐
+feed_id|对应的方向  id
+reply_all_count|全部评论数目
+Attach|附件
+Praise|喜欢
+
+
+
+---
+#### 获取一条帖子列表数据|API|/Weiba/post_one
+
+###### 传递参数
+参数名称|参数说明
+---|---
+post_id|帖子  id
+
+返回信息
+参数名称|参数说明
+---|---
+post_id|帖子  id
+weiba_id|微吧  ID
+post_uid|发布者  id
+Title|标题
+Content|内容
+post_time|发布时间
+From|发布来源
+reply_count|回复数
+read_count|阅读数
+last_reply_uid|最后加入者  id
+last_reply_time|最后回复时间
+Digest|全局精华，0：否，1：是
+lock|不允许回复 0：否，1：是
+Top|置顶，0：否，1：吧内，2：全局
+Recommend|是否为推荐
+feed_id|对应的方向  id
+reply_all_count|全部评论数目
+Attach|附件
+Praise|喜欢
+
+
+---
+#### 获取精华帖子|API|Weiba/digest_all
+/
+###### 传递参数
+参数名称|参数说明
+---|---
+weiba_id|微吧  id
+max_id|上次返回的最后一条  id
+
+
+###### 返回信息
+参数名称|参数说明
+---|---
+post_id|帖子  id
+weiba_id|微吧  ID
+post_uid|
+发布者 | id
+Title|标题
+Content|内容
+post_time|发布时间
+From|发布来源
+reply_count|回复数
+read_count|阅读数
+last_reply_uid|最后加入者  id
+last_reply_time|最后回复时间
+Digest|全局精华，0：否，1：是
+lock|不允许回复 0：否，1：是
+Top|置顶，0：否，1：吧内，2：全局
+Recommend|是否为推荐
+feed_id|对应的方向  id
+reply_all_count|全部评论数目
+Attach|全部评论数目
+Praise|喜欢
+
+
+---
+#### 获取全部微吧|API|/Weiba/all_wieba
+
+###### 传递参数
+参数名称|参数说明
+---|---
+max_id|上次返回的最后一条  id
+
+###### 返回参数
+参数标题|参数说明
+---|---
+weiba_id|微吧  id
+cid|分类  id
+weiba_name|微吧名称
+uid|创建者  ID
+ctime|创建时间
+Logo|微吧  logo
+Intro|简介
+who_can_post|发帖权限，0：所有人，1：成员
+who_can_reply|回帖权限，0：所有人，1：成员
+fllower_count|成员数
+thread_count|帖子数
+admin_uid|吧主
+recomend|是否热门
+notify|通知
+---
+#### 评论帖子|API|/Weiba/comment_post
+
+###### 传递参数
+参数名称|参数说明
+---|---
+post_id|帖子  id
+to_comment_id|评论  id
+content|评论内容
+from|来源(2-android 3-iPhone)
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+
+---
+#### 赞一个帖子|API|/Weiba/add_post_digg
+---
+#### 取消赞一个帖子|API|==
+###### 传递参数
+参数名称|参数说明
+---|---
+post_id|帖子  id
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+
+---
+#### 发布一个图片帖子|API|/Weiba/upload_photo
+---
+
+#### 发布一个普通帖子|API|/Weiba/add_post
+
+###### 传递参数
+参数名称|参数说明
+---|---
+weiba_id|微吧  id
+content|帖子内容
+title|帖子标题
+attach_ids|附件 ID，多个用英文半角“|”隔开（如果有）
+>如果是图片帖子，需要将图片一同提交
+
+###### 返回参数
+参数名称|参数说明
+---|---
+status|0：失败，1：成功
+msg|消息
+post_id|帖子id
+
+# TagApi
+
+#### 所以标签|API|/Tag/tag_all
+
+######  返回参数
+参数名称|参数值说明
+---|---
+id|标签  id
+title|标签名称
+
+
+ 
+#### 我的标签 |API|/Tag/tag_my
+
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+id|标签  id
+title|标签名称
+
+
+#### 添加个人标签 |API|/Tag/addTag
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+name|标签名称
+
+
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+info|消息
+status|0：失败，1：成功
+data|标签  id
+
+#### 删除个人标签|API|/Tag/deleteTag
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+tag_id|标签  id
+
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+info|消息
+status|0：失败，1：成功
+
+
+
+# 举报API  DenounceApi 
+
+#### 举报|API|/Denounce/post
+
+ 
+###### 传递参数
+参数名称|参数值P说明
+---|---
+from|类型，feed或者  weiba
+aid|资源  id
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|0：失败，1：成功
+info|消息
+
+#  CreditApi 积分API
+
+#### 获取当前用户积分|API|/Credit/credit_my
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+score|积分
+
+#### 积分详情列表|API|/Credit/detail
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+max_id|上次返回的参数最后一条的值
+limit|获取的条数
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+rid|记录  id
+uid|用户  id
+action|操作
+ctime|创建时间
+score|积分详情
+
+ 
+#### 积分转账|API| /Credit/transfer
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+to_uid|对方用户  id
+num|转出数量
+desc|转账留言/ 描述可选
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|0：失败，1：成功
+mesage|消息
+
+
+
+#### 积分规则|API|/Credit/rule
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+score|积分详情
+experience|
+score_alias|类型
+experience_alias|
+
+
+#### 设置用户积分|API|/Credit/setCredit
+
+###### 传递参数
+name|操作动作名称
+---|---
+> 返回值：1
+
+
+#### 充值，创建一个订单|API|/Credit/createCharge
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+money|金额
+type|只有 alipay，weixin
+
+
+
+
+ 
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|状态，0：失败，1;成功
+mesage|消息
+data|附加数据
+
+###### 附加数据
+数据名称|数据说明
+---|---
+serial_number|订单号
+charge_type|充值类型
+charge_value|充值金额
+uid|用户  id
+ctime|创建时间
+status|状态
+charge_sroce|积分
+charge_order|
+charge_id|服务器订单  id
+
+
+
+#### 保存充值|API|/Credit/saveCharge
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+serial_number|订单号
+status|状态
+sign|签字
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|0：失败，1：成功
+消息|mesage
+
+#### 获取预设充值值|API|/Credit/get_charge
+
+###### 返回参数
+参数名称|参数说明
+---|---
+value|金额
+score|积分
+
+
+# 签到API CheckinApi 
+
+#### 获取签到情况|API|/Checkin/get_check_info
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+ischeck|是否已经签到
+con_num|连续签到天数
+total_num|总天数
+day|时间
+
+
+#### 签到排行|API|/Checkin/rank
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+uid|用户  id
+con_num|连续签到天数
+total_num|总天数
+ctime|时间
+avatar|头像
+uname|用户名
+
+#### 签到|API|/Checkin/checkin
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+ischeck|是否已经签到
+con_num|连续签到天数
+total_num|总天数
+day|时间
+
+
+
+#### 记录签到获得位置|API|/Check/checkinlocation
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+latitude|纬度
+longitude|经度
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|状态码
+
+# ChannelApi 频道API
+
+#### 获取所有频道分类|API|/Channel/get_all_channel
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+max_id|上 次返回的最后一条 sort_id
+count|需要获取的条数
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+channel_category_id|频道  id
+title|频道标题
+is_follow|是否关注
+image|频道图标
+count|收听人数
+
+
+#### 获取用户关注的频道|API|/Channel/get_user_channel
+
+###### 传递参数
+
+参数名称|参数值说明
+---|---
+uid|用户  id
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+channel_category_id|频道  id
+title|频道标题
+is_follow|是否关注
+image|频道图标
+count|收听人数
+
+#### 获取频道分类下的微博|API|/Channel/channel_detail
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+channel_category_id|频道分类    ID
+max_id|上次返回的最后一条  feed_id
+count|要获取的条数
+type|微博类型 0-全部 1-原创 2-转发 3-图片 4-附件 5-视频
+
+###### 返回的参数
+参数名称|参数说明
+---|--
+status|状态
+feed_id|分享  id
+uid|分享  id
+type|分享类型
+app_name|应用名称
+stable|所在表
+sid|资源  id
+is_repost|
+publish_time|
+latitude|纬度
+longitude|经度
+address|详细地址
+channel_category_id|频道  id
+channel_category_name|频道名称
+from|来自
+content|内容
+repost_count|回复数
+comment_count|评论数
+digg_count|赞数
+digg_users|赞用户
+attach_info|附件信息
+source_info|资源信息
+user_info|用户信息
+is_digg|是否赞了
+is_favorite|
+can_comment|是否可以回复
+comment_info|回复详情
+
+#### 频道关注或取消关注|API|/Channel/channel_follow
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+channel_category_id|频道    id
+type|1-关注 0-取消关注
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+
+---
+# 名片库API  NamecardApi 
+
+
+#### 个人名片列表 |读取| /Namecard/getNamecardList
+
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+demo|示例
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+#### 个人名片详情 |读取| /Namecard/getNamecardDetail
+
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+demo|示例
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+
+#### 名片搜索 |读取| /Namecard/searchNamecard
+
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+demo|示例
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+
+#### 保存名片  |动作| /Namecard/saveNamecard
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+demo|示例
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|0：失败，1：成功
+msg|消息
+
+#### 删除名片 |动作| /Namecard/delNamecard
+
+
+###### 传递参数
+参数名称|参数值P说明
+---|---
+demo|示例
+
+###### 返回参数
+参数名称|参数值说明
+---|---
+status|0：失败，1：成功
+msg|消息
+

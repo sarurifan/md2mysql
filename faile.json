@@ -1,0 +1,418 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "\u4ecb\u7ecd\r\n- \u7cfb\u7edf\u57fa\u4e8e ThinkSNS v4 \u5f00\u53d1\r\n- \u6b63\u5e38 T4API\u63a5\u5165\u5730\u5740  api.php\r\n- API\u9ed8\u8ba4\u9700\u8981\u7528\u6237\u767b\u5f55\u540e\uff0c\u4f20\u8f93\u6b63\u786e\u7684 oauth_token\u548c  oauth_token_secret\u624d\u80fd\u6b63\u5e38\u8bbf\u95ee\uff0c\r\n- \u4f46\u662f\uff0capi\u4e5f\u6709\u4e0d\u7528\u767b\u9646\u7684 api\uff0c\u8fd9\u79cd api\u6211\u4eec\u79f0\u4e4b\u4e3a\u767d\u540d\u5355  api\uff0c\u6dfb\u52a0\u767d\u540d\u5355 api\u5728\r\n\/config\/api.inc.php\u4e2d\u914d\u7f6e\r\n- \u4ee5\u4e0b API\u5730\u5740\u683c\u5f0f\u662f\/mod\/act\u7684\u5f62\u5f0f\u4e66\u5199\uff0c\u4f8b\u5982  api.php?mod=Oauth&act=authorize\u5c06\u4ee5\r\n\/Oauth\/authorize\u7684\u5f62\u5f0f\u63cf\u8ff0\u3002\r\n- API\u6309\u7167\u6309\u7167\u529f\u80fd\u6587\u4ef6\u6392\u5217\u4e66\u5199\uff0c\u4e0d\u5206\u5148\u540e\uff0c\u53ef\u80fd\u6709\u4e9b\u529f\u80fd\u4f1a\u88ab\u5c94\u5f00\uff01\r\n- API\u53c2\u6570\u4f20\u9012\uff0c\u652f\u6301 get\u548c  post\u6df7\u5408\u4f20\u8f93\uff0c\u4f46\u662f\uff0cmod\u548c  act\u5fc5\u987b  get\u65b9\u5f0f\uff0c\u5176\u4ed6\u53c2\u6570\u5efa\u8bae post\u65b9\u5f0f\u4f20\u8f93\r\n- \u968f\u7740\u529f\u80fd\u5f00\u53d1 \u6587\u6863\u4f1a\u9010\u6b65\u66f4\u65b0 \u7248\u672c\u8fed\u4ee3\r\n- \u76ee\u524d\u7248\u672c 1.22\r\n- \u66f4\u65b0\u65f6\u95f4 2019 12 23",
+        "version": "1.0",
+        "title": "\u4eff\u7267\u6e38\u5b9d\u5178\u9879\u76eeAPI 1.01",
+        "termsOfService": "192.168.0.168",
+        "contact": {
+            "email": "sarurifan@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http:\/\/www.apache.org\/licenses\/LICENSE-2.0.html"
+        }
+    },
+    "host": "192.168.0.168:8039",
+    "basePath": "",
+    "tags": [{
+            "name": "Oauth",
+            "description": "\u6743\u9650\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "System",
+            "description": "\u7cfb\u7edf\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Message",
+            "description": "\u6d88\u606f\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "User",
+            "description": "\u4e2a\u4eba\u4e3b\u9875\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Task",
+            "description": "\u4efb\u52a1\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Gift",
+            "description": "\u793c\u7269\u5546\u57ce\u7c7b\u63a5\u53e3 |"
+        },
+        {
+            "name": "FindPeople",
+            "description": "\u627e\u4eba\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Weibo",
+            "description": "\u5fae\u535a\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Tag",
+            "description": "\u6807\u7b7e\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Denounce",
+            "description": "\u4e3e\u62a5\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Credit",
+            "description": "\u79ef\u5206\u5145\u503c\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Checkin",
+            "description": "\u7b7e\u5230\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Channel",
+            "description": "\u9891\u9053\u76f8\u5173\u7c7b\u63a5\u53e3"
+        },
+        {
+            "name": "Public",
+            "description": "\u5168\u5c40\u7cfb\u5217\u63a5\u53e3"
+        },
+        {
+            "name": "Namecard",
+            "description": "\u540d\u7247\u5e93\u7cfb\u5217\u63a5\u53e3"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "sendVerify\/{phone}\/{deviceType}": [],
+        "\/api\/passport\/sendVerify\/{phone}\/{deviceType}": {
+            "post": {
+                "tags": [
+                    "passport"
+                ],
+                "summary": "\u53d1\u9001\u9a8c\u8bc1\u7801",
+                "description": "",
+                "operationId": "sendVerify",
+                "produces": [
+                    "application\/json"
+                ],
+                "parameters": [{
+                        "name": "phone",
+                        "in": "path",
+                        "required": true,
+                        "description": "\u624b\u673a\u53f7\n\t ",
+                        "type": "string"
+                    },
+                    {
+                        "name": "deviceType",
+                        "in": "path",
+                        "required": true,
+                        "description": "\u8bbe\u5907\u7c7b\u578b(0: android\u624b\u673a, 1: ios\u624b\u673a, 2: android\u5e73\u677f, 3: ios\u5e73\u677f, 4: pc)\n\t ",
+                        "type": "integer",
+                        "enum": [
+                            "0",
+                            "1",
+                            "2",
+                            "3",
+                            "4"
+                        ]
+                    }
+                ]
+            }
+        },
+        "login": [],
+        "\/api\/passport\/login": {
+            "post": {
+                "tags": [
+                    "passport"
+                ],
+                "summary": "\u767b\u96469111",
+                "description": "",
+                "operationId": "login",
+                "produces": [
+                    "application\/json"
+                ],
+                "parameters": [{
+                        "name": "phone",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u624b\u673a\u53f7\n\t ",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u5bc6\u7801\n\t ",
+                        "type": "string"
+                    },
+                    {
+                        "name": "deviceType",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u8bbe\u5907\u7c7b\u578b(0: android\u624b\u673a, 1: ios\u624b\u673a, 2: android\u5e73\u677f, 3: ios\u5e73\u677f, 4: pc)\n\t ",
+                        "type": "integer",
+                        "enum": [
+                            "0",
+                            "1",
+                            "2",
+                            "3",
+                            "4"
+                        ]
+                    },
+                    {
+                        "name": "verifyCode",
+                        "in": "formData",
+                        "required": false,
+                        "description": "\u9a8c\u8bc1\u7801\n\t ",
+                        "defaultValue": "0",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+
+        "authorize": [],
+        "\/api\/passport\/authorize": {
+            "post": {
+                "tags": [
+                    "passport"
+                ],
+                "summary": "\u7528\u6237\u767b\u5f55",
+                "description": "",
+                "operationId": "authorize",
+                "produces": [
+                    "application\/json"
+                ],
+                "parameters": [{
+                        "name": "phone",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u624b\u673a\u53f7\n\t ",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u5bc6\u7801\n\t ",
+                        "type": "string"
+                    },
+                    {
+                        "name": "deviceType",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u8bbe\u5907\u7c7b\u578b(0: android\u624b\u673a, 1: ios\u624b\u673a, 2: android\u5e73\u677f, 3: ios\u5e73\u677f, 4: pc)\n\t ",
+                        "type": "integer",
+                        "enum": [
+                            "0",
+                            "1",
+                            "2",
+                            "3",
+                            "4"
+                        ]
+                    },
+                    {
+                        "name": "verifyCode",
+                        "in": "formData",
+                        "required": false,
+                        "description": "\u9a8c\u8bc1\u7801\n\t ",
+                        "defaultValue": "0",
+                        "type": "string"
+                    }
+                ]
+
+
+            }
+        },
+        "\/Oauth\/logout": {
+            "post": {
+                "tags": [
+                    "Oauth"
+                ],
+                "summary": "\u7528\u6237\u9000\u51fa\u767b\u5f55",
+                "description": "",
+                "operationId": "logout",
+                "produces": [
+                    "application\/json",
+                    "application\/xml"
+                ],
+                "parameters": [{
+                    "name": "login",
+                    "in": "formData",
+                    "required": true,
+                    "description": "\u9000\u51fa\u7684\u7528\u6237\uff0c\u652f\u6301 uid\uff0cuname\uff0cphone\uff0cemail",
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "": "#\/definitions\/Pet"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                },
+                "security": {
+                    "petstore_auth": [
+                        "write:pets",
+                        "read:pets"
+                    ]
+                }
+            }
+        },
+        "\/Oauth\/sendCodeByPhone": {
+            "POST": {
+                "tags": [
+                    "Oauth"
+                ],
+                "summary": "# \u83b7\u53d6\u624b\u673a\u9a8c\u8bc1\u7801\uff08\u4ec5\u7528\u4e8e\u6ce8\u518c\u7528\u6237\uff09",
+                "description": "",
+                "operationId": "sendCodeByPhone",
+                "produces": [
+                    "application\/json",
+                    "application\/xml"
+                ],
+                "parameters": [{
+                    "name": "login",
+                    "in": "formData",
+                    "required": true,
+                    "description": "\u8be5\u5b57\u6bb5\u53ef\u4ee5\u662f\u56db\u4e2a\u7c7b\u578b 1.UID\uff0c2.email\uff0c3.phone\uff0c4.uname",
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "": "#\/definitions\/Pet"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                },
+                "security": {
+                    "petstore_auth": [
+                        "write:pets",
+                        "read:pets"
+                    ]
+                }
+            }
+        },
+        "\/Oauth\/checkCodeByPhone": {
+            "POST": {
+                "tags": [
+                    "Oauth"
+                ],
+                "summary": "\u6821\u9a8c\u624b\u673a\u9a8c\u8bc1\u7801\u662f\u5426\u6b63\u786e",
+                "description": "",
+                "operationId": "checkCodeByPhone",
+                "produces": [
+                    "application\/json",
+                    "application\/xml"
+                ],
+                "parameters": [{
+                        "name": "login",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u8be5\u5b57\u6bb5\u53ef\u4ee5\u662f\u56db\u4e2a\u7c7b\u578b 1.UID\uff0c2.email\uff0c3.phone\uff0c4.uname",
+                        "type": "string"
+                    },
+                    {
+                        "name": "code",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u9a8c\u8bc1\u7801",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "": "#\/definitions\/Pet"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                },
+                "security": {
+                    "petstore_auth": [
+                        "write:pets",
+                        "read:pets"
+                    ]
+                }
+            }
+        },
+        "\/Oauth\/saveUserPasswordByPhone": {
+            "POST": {
+                "tags": [
+                    "Oauth"
+                ],
+                "summary": "# \u4fdd\u5b58\u7528\u6237\u65b0\u5bc6\u7801",
+                "description": "",
+                "operationId": "saveUserPasswordByPhone",
+                "produces": [
+                    "application\/json",
+                    "application\/xml"
+                ],
+                "parameters": [{
+                        "name": "login",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u7528\u6237\u5b57\u6bb5\uff0c\u652f\u6301 uid\uff0cemail\uff0cphone\uff0cuname",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u8981\u4fdd\u5b58\u7684\u7528\u6237\u5bc6\u7801",
+                        "type": "string"
+                    },
+                    {
+                        "name": "code",
+                        "in": "formData",
+                        "required": true,
+                        "description": "\u9a8c\u8bc1\u7801",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "": "#\/definitions\/Pet"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                },
+                "security": {
+                    "petstore_auth": [
+                        "write:pets",
+                        "read:pets"
+                    ]
+                }
+            }
+        }
+    },
+    "securityDefinitions": [],
+    "definitions": [],
+    "externalDocs": {
+        "description": "\u67e5\u627e\u8be6\u7ec6\u8bf4\u660e",
+        "url": "https:\/\/github.com\/sarurifan\/markdown2swagger"
+    }
+}
