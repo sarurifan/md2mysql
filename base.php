@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | markdown2swagger
+// | markdown2mysql
 // +----------------------------------------------------------------------
 // | Copyright (c) 2006~2019 http://saruri.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -8,45 +8,73 @@
 // +----------------------------------------------------------------------
 // | Author: saruri <sarurifan@gmail.com>
 // +----------------------------------------------------------------------
-
 namespace saruri;
+include_once "datatransform.php";
 
 /**
-* markdown转换为格式接口 做准备  数据处理 返回数组格式 供前级进行 构造swagger格式
-* 约定格式 1. " --- " 为每个接口分隔
-* 约定格式 2. 第一个为整个系统接口介绍 之后都是具体接口
-* 约定格式 3. 第一个里面 " ## 分类介绍 " 为介绍 接口的主分类 TAG
-* 约定格式 4. #### 接口名称|方式|路径
-* 约定格式 5. ###### 传输参数  传输参数表
-* 约定格式 6. ###### 返回参数  返回参数表
-* 约定格式 7. ``` 到 ``` 为 接口示例说明 或其他 根据约定来
+*# 号为 表名 然后接空格 注释表名
+*例 # sys_think_php  系统基础表
+*表头固定 三列
+*>- 示范md
+*> # sys_think_php  系统基础表
+*> 字段|参数|备注
+*> ---|---|---
+*> id| int 11 key| 表id
+*> name| varchar 255 notnull 不为空|姓名
 *
 */
-class Base
+class MainService
 {
     /**
      * @var array 配置参数
      */
-    private static $_config = [
-        'MD_SOURCE' => 'api.md',
-        'DB_NAME'=> 'thinkssns_com',
-        'DB_USER' => 'thinkssns_com',
-        'DB_PWD' => 'NHGMJBW7FfdF2etF',
+    private  $_config = [
+        'CHAR'=>1,
+        'VARCHAR' => 100,
+        'INT'=> 11,
+        'FLOAT' => '(8,2)',
+        'DOUBLE'=>'(8,2)',
+        'TEXT'=>'',
+        'TIMESTAMP'=>'',
+        'DATETIME'=>'',
+        'MEDIUMINT'=>6,
+        'TINNYINT'=>1,
     ];
 
-    public $mdFile='';
-    public $orm;
-    public $tables;
-    public $conn;
+    private $_requestString;
+
     public $result; //返回的最终数组
 
     //初始
-    public function __construct()
+    public function __construct($string='')
     {
+        $this->_config['requestString']=$string;
         //各种配置
         date_default_timezone_set('Asia/Shanghai');
+        if($string==''){
+            $this->_config['requestString']='*> # sys_think_php  系统基础表
+            *> 字段|参数|备注
+            *> ---|---|---
+            *> id| int 11 key| 表id
+            *> name| varchar 255 notnull 不为空|姓名';
+        }
+        //接收字符串
+        self::init();
+        //exit("shanghai");
     }
     
+    //初始化参数
+    public function init()
+    {
+        
+        
+        $arr=[];
+        $md= new DataTransform($this->_config);
+        $this->result=$md->run();
+        //异常判断
+        self::check();
+    }
+
     //重载配置
     public function setConfig($config)
     {
@@ -54,266 +82,132 @@ class Base
     }
     
 
-
-    //读取数据
-    public function readFile()
-    {
-        $this->mdFile =  file_get_contents(self::$_config['MD_SOURCE']) or die("Unable to open file!");
-        $this->mdFile =str_replace("---|---", "======", $this->mdFile);
-        $this->mdFile =str_ireplace("|API|", "|POST|", $this->mdFile);//原文档有点问题 应该写|POST| |GET| 后期按约定的写就没这问题了
-        $this->arr=explode('---', $this->mdFile);
-
-        $this->getApiBaseInfo();
-
-        
-        unset($this->arr[0]);
-        //var_dump($this->arr);
-        //var_dump($this->arr[1]);
-        //exit('结束读取');
-    }
-     
-    
-
-    //获取接口名
-    public function getApiName()
-    {
-    }
-
-    //获取接口标识 tag
-    public function getApiTag()
-    {
-
-        $arr  = explode("## 分类介绍", $this->info);
-        $arr2 = explode("##", $arr[1]);
-        $arr3 = explode("-", $arr2[0]);
-        unset($arr3[0]);
-
-        foreach ($arr3 as $key => $value) {
-            $arr4=explode("/", $value);
-            $this->result['tag'][$arr4[1]]['name'] = trim($arr4[0]);
-            $this->result['tag'][$arr4[1]]['path'] = trim($arr4[1]);
-            $this->result['tag'][$arr4[1]]['info'] = trim($arr4[2]);
-        }
-        
-        unset($arr,$arr2,$arr3,$arr4);
-        
-    }
-
-    //获取接口 完整路径
-    public function getApiUrl()
-    {
-    }
-
-    //获取项目介绍 构造数组
-    public function getApiBaseInfo()
-    {
-        //获取项目的各种介绍数据
-        $this->info=$this->arr[0];
-
-        //获取主题
-        $arr  = explode("##", $this->info);
-        $title=str_replace("#","", $arr[0]);
-        $this->result['title']=trim($title);
-        
-        //获取项目介绍
-        $this->result['info']=trim($arr[1]);
-        unset($arr);
-
-    }
-
-
-
-
-    //获取具体接口名字和介绍
-    public function getApiInfo($string)
-    {
-       
-        $arr2 =$this->getApiTitle($string);
-        // $this->result['tag']
-       //var_dump($arr2);
-       return $arr2;
-    }
-
-    //获取具体接口名字和介绍 返回数组 各种情况都出来了 .md写的好随意 
-    //正则不熟 那就来个数组地狱吧
-    public function getApiTitle($string)
-    {
-        //$string=str_replace("=","",$string);
-        $arr  = explode("######", $string);
-        $arr2 = explode("|", $arr[0]);
-        $arr3['name']= trim(str_replace("####","",$arr2[0]));
-        $arr3['name']=trim(str_replace("-","", $arr3['name']));
-        $arr7=explode("####",$arr3['name']);
-        $arr3['name']=trim($arr7[0]);
-
-
-        $arr3['type']= trim($arr2[1]);
-
-        $arr5=explode(">",$arr2[2]);
-        $arr3['url']= trim($arr5[0]);
-        $arr9=explode("####",$arr3['url']);
-        $arr3['url']=trim($arr9[0]);
-
-        $arr4 = explode("/", $arr2[2]);
-        $arr3['tag_key']=trim($arr4[1]);
-
-        $arr6=explode(">",$arr4[2]);
-        $arr8=explode("####",$arr6[0]);
-        $arr3['api_key']=trim($arr8[0]);
-
-
-        $arr3['api_info']=trim($arr5[1]);
-
-        $arr3['api_param']=$this->getApiParam($string);
-        $arr3['api_request']=$this->getApiRequest($string);
-        $arr3['api_example']=$this->getApiExample($string);
-        $arr3['api_request_field_info']=$this->getApiRequestFieldInfo($string);
-        unset($arr,$arr2,$arr4,$arr5,$arr6,$arr7,$arr8,$arr9);
-        return $arr3;
-    }
-
-    //获取传输参数
-    public function getApiParam($string){
-        $substr='###### 传递参数';
-        $nums=substr_count($string,$substr);
-            if ($nums<1){ return false; exit($nums.'###### 传递参数'.$string); }
-            if ($nums>0){
-                $arr=explode($substr,$string);
-                $arr2=explode('======',$arr[1]);
-                $arr3=explode('######',$arr2[1]);
-                $arr4=explode("\r\n", $arr3[0]);
-               
-                foreach ($arr4 as $key => $value) {
-                    $value=trim($value);
-                    if($value){
-                        $arr5=explode("|", $value);
-
-                        $arr6[$arr5[0]]=trim($arr5[1]);
-                    }
-                }
-
-                return $arr6;
-                //var_dump($arr6);
-                //var_dump(trim($arr3[0]));
-                //exit();
-            }
-        return '';
-        //exit($string);
-    }
-
-    //获取返回参数
-    public function getApiRequest($string){
-        //exit($string);
-        //exit("获取request");
-        $substr='###### 返回参数';
-        $nums=substr_count($string,$substr);
-        if ($nums<1){ return false;  exit($nums.'###### 传递参数'.$string); }
-
-        if ($nums>0){
-            $arr=explode($substr,$string);
-            $arr2=explode('======',$arr[1]);
-            $arr3=explode('```',$arr2[1]);
-            $arr4=explode("\r\n", $arr3[0]);
-            foreach ($arr4 as $key => $value) {
-                $value=trim($value);
-                if($value){
-                    $arr5=explode("|", $value);
-
-                    $arr6[$arr5[0]]=trim($arr5[1]);
-                }
-            }
-            return $arr6;
-
-            //新增的 让返回的是字符串 而不是数组了
-            $str='';
-            $str.='返回参数 | 返回参数说明<br>';
-            foreach ($arr6 as $k => $val) {
-                # code...
-                $str.='<em>'.$k.'</em> | '.$val.'<br>';
-            }
-
-            
-
-            //var_dump($arr6);
-            //exit("测试");
-                return $str;
-            
-          
-            exit($string);   
-        }
-        
-    }
-
-    //获取示例参数
-    public function getApiExample($string){
-        
-        $arr=explode("示例说明",$string);
-        if($arr[1]){
-            $arr2=explode("=====",$arr[1]);
-            $arr3=explode("```",$arr2[1]);
-            $arr4=explode("\r\n",$arr3[0]);
-            foreach ($arr4 as $key => $value) {
-                //var_dump($value);
-               // echo '--->'.$key.'<br>';
-                if($value && $value !="="){
-                    $arr10=explode("|",$value);
-                    $arr5[$arr10[0]]=$arr10[1];
-                }
-                
-            }
-        }
-        $arr6=explode("|",$arr2[0]);
-        $keyName=trim($arr6[0]);
-
-        $arr7[$keyName]=$arr5;
-        //var_dump($arr2);
-        return $arr7;
-        var_dump($arr7);
-        exit("测试示例".$keyName);
-        exit($string);
-    }
-    
-
-    //获取返回参数字段说明
-    public function getApiRequestFieldInfo($string){
-        if($string){
-            $arr=explode('```',$string);
-            if($arr[1]){
-                //$arr[1]=str_replace(" ","",$arr[1]);
-                //$arr[1]=str_replace("/r/n","",$arr[1]);
-                return trim($arr[1]);
-            }
-        }
-        return '';
-    }
-
-
-
-
     //执行
     public function run()
     {
-        $this->readFile();
-        $this->getApiTag();
+       
+        //获取数据
+        $this->makeSql();
 
-        //var_dump($this->result);
-        foreach ($this->arr as $key => $value) {
-
-            $arr=$this->getApiInfo($value);
-            $this->result['tag'][$arr['tag_key']]['api'][$arr['api_key']]=$arr;
-
-            //var_dump($arr);
-           // echo $arr['tag_key']."<br>";
-
-        }
-
-        //var_dump($this->result);
+        //存储cookies
+        self::saveCookies();
+        //保存json
+        self::saveJsonFile();
         
-        return $this->result;
+        //回传json
+        self::returnJson();
+        //return $this->result;
+        echo '处理了'."\r\n";
+
+    }
+
+    /* 
+    *  @desc      获取数据
+    *  @author    saruri <saruri@163.com>
+    *  @date      2020/04/12 14:22:13  
+    */ 
+    public function makeSql()
+    {   
+        $sql="#DROP TABLE IF EXISTS ".$this->result['tableName'].";"."\r\n";
+        $sql.="CREATE TABLE `".$this->result['tableName']."` (";
+        #$sql.=" `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '城市编号',";
+        $sql.=$this->joinField();
+            // `province_id` int(10) unsigned  NOT NULL COMMENT '省份编号',
+            // `city_name` varchar(25) DEFAULT NULL COMMENT '城市名称',
+            // `description` varchar(25) DEFAULT NULL COMMENT '描述',
+            // PRIMARY KEY (`id`)
+        $sql.=" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '".$this->result['tableComment']."';";
+        echo $sql."\r\n";
+        //$arr=[];
+       //var_dump($this->result);
+        //echo '获取了数据'."\r\n";
+    }
+
+    /* 
+    *  @desc      拼接字段
+    *  @author    saruri <saruri@163.com>
+    *  @date      2020/04/12 23:14:54  
+    */ 
+    public function joinField()
+    {
+        $arr=$this->result['fields'];
+        $string='';
+        foreach ($arr as $key => $result) {
+            # code...
+            $string.= "`".$result['name']."` ".$result['type'].$result['length']." ".$result['key']." ".$result['auto']." ".$result['null']." ".$result['default']." COMMENT '".$result['comment']."',";
+        }
+        return trim($string,",");
+        // $result['name']=$arr[0];//字段名称
+        // $result['comment']=$arr[2];//字段中文说明
+        // $result['type']=$this->getType($string);//类型
+        // $result['length']=$this->getLength($string);//长度
+        // $result['key']=$this->getKey($string);//主键
+        // $result['null']=$this->getNull($string);//是否允许空
+        // $result['auto']=$this->getAuto($string);//是否自增
+        // $result['default']=$this->getDefault($string);//是否自增
+
+    }
+
+    /* 
+    *  @desc      返回数据
+    *  @author    saruri <saruri@163.com>
+    *  @date      2020/04/12 11:13:47  
+    */ 
+    public function returnJson()
+    {
+        //echo '返回了json'."\r\n";
+    }
+
+
+    /* 
+    *  @desc      方法说明
+    *  @author    saruri <saruri@163.com>
+    *  @date      2020/04/12 11:13:10  
+    */ 
+    public function saveCookies()
+    {
+        //echo '保存cookies'."\r\n";
+    }
+
+    /* 
+    *  @desc      方法说明
+    *  @author    saruri <saruri@163.com>
+    *  @date      2020/04/12 11:12:35  
+    */ 
+    public function check()
+    {
+        //echo '异常判断'."\r\n";
+    }
+
+
+
+    /* 
+    *  @desc      保存json
+    *  @author    saruri <saruri@163.com>
+    *  @date      2020/04/12 10:53:06  
+    */ 
+    public static function saveJsonFile()
+    {
+        //do something
+        //echo '保存了json'."\r\n";
     }
 
    
 }
+$string='# 分销记录 retaileRecord
+项目 | 类型|说明
+---|---|---
+retaile_record_id| int 8 auto key |收益记录id
+parent_userid | int 8 |上级用户 
+sub_userid|int 8 |下级用户
+retaile_time| int 11|时间
+retaile_type|tinyint 1|收益类型, 0 注册会员 ,1 认证企业,  2 认证个人,  3 vip1, 4 vip2
+retaile_score1|整数 11 |收益金额
+retaile_score2|日期 11 |收益金额
+retaile_score3|时间戳 11 |收益金额
+retaile_score4|时间 11 |收益金额
+retaile_score5| 文本 |收益金额
+retaile_score6|int 11 |收益金额';
 
-//$md= new Base();
-//$md->run();
+$md= new MainService($string);
+$md->run();
