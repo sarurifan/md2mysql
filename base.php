@@ -116,7 +116,7 @@ class MainService
             // `city_name` varchar(25) DEFAULT NULL COMMENT '城市名称',
             // `description` varchar(25) DEFAULT NULL COMMENT '描述',
             // PRIMARY KEY (`id`)
-        $sql.=" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '".$this->result['tableComment']."';";
+        $sql.=" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '".$this->result['tableComment']."';"."\r\n";
         echo $sql."\r\n";
         //$arr=[];
        //var_dump($this->result);
@@ -134,7 +134,7 @@ class MainService
         $string='';
         foreach ($arr as $key => $result) {
             # code...
-            $string.= "`".$result['name']."` ".$result['type'].$result['length']." ".$result['key']." ".$result['auto']." ".$result['null']." ".$result['default']." COMMENT '".$result['comment']."',";
+            $string.= "`".$result['name']."` ".$result['type'].$result['length']." ".$result['key']." ".$result['auto']." ".$result['null']." ".$result['default']." COMMENT '".$result['comment']."',"."\r\n";
         }
         return trim($string,",");
         // $result['name']=$arr[0];//字段名称
