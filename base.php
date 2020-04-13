@@ -132,10 +132,13 @@ class MainService
     {
         $arr=$this->result['fields'];
         $string='';
-        foreach ($arr as $key => $result) {
-            # code...
-            $string.= "`".$result['name']."` ".$result['type'].$result['length']." ".$result['key']." ".$result['auto']." ".$result['null']." ".$result['default']." COMMENT '".$result['comment']."',"."\r\n";
+        if($arr){
+            foreach ($arr as $key => $result) {
+                # code...
+                $string.= "`".$result['name']."` ".$result['type'].$result['length']." ".$result['key']." ".$result['auto']." ".$result['null']." ".$result['default']." COMMENT '".$result['comment']."',"."\r\n";
+            }
         }
+
         return trim($string,",");
         // $result['name']=$arr[0];//字段名称
         // $result['comment']=$arr[2];//字段中文说明
