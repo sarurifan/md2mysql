@@ -81,7 +81,7 @@ class DataTransform
     }
 
     /* 
-    *  @desc      获取类型 就设置了几个简单类型 多的您可以自行扩展
+    *  @desc      获取类型 就设置了几个简单类型 多的您可以自行扩展 目前就这些了 
     *  @author    saruri <saruri@163.com>
     *  @date      2020/04/12 19:57:25  
     */ 
