@@ -34,11 +34,7 @@ class DataTransform
         $this->_config['requestString']=str_replace(">","",$this->_config['requestString']);
         $this->_config['requestString']=str_replace("*","",$this->_config['requestString']);
         $this->arrResult=explode("\r\n",$this->_config['requestString']);
-        // $string='';
-        // foreach ($arr as $key => $value) {
-        //     $string= $value;
-        //     //echo  $string."\r\n";
-        // }
+        
    }
       
     /* 
