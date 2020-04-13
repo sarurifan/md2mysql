@@ -257,7 +257,7 @@ class DataTransform
         self::saveTableFiled(); 
         return $this->tableConfig;
         //var_dump($this->tableConfig);
-         echo '处理了数据'."\r\n";
+         //echo '处理了数据'."\r\n";
     }
 
 
