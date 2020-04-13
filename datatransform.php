@@ -138,13 +138,14 @@ class DataTransform
         //ALERT TABLE table-name ADD col-name col-type COMMENT 'xxx';
         $arr=explode("|",trim($string));
         //var_dump($arr);
+        if($arr){
         foreach ($arr as $key => $value) {
             if(intval($value)>0){
                 //return '######pass';
                 return '('.$value.')';
             }
         }
-
+        }
         //默认值
         $type=$this->getType($string);
         //return $type;
