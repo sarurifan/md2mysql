@@ -64,7 +64,7 @@
         <div class="layui-col-md4 layui-form-text td td2">
             <label class="layui-form-label">SQL文本</label>
             <div class="layui-input-block">
-                <textarea placeholder="这里显示建表sql的文本1" id="sql" class="layui-textarea"></textarea>
+                <textarea placeholder="这里显示建表sql的文本" id="sql" class="layui-textarea"></textarea>
             </div>
         </div>
 
@@ -188,8 +188,9 @@
                 var md = layui.$("#md").html();
                 var db = layui.$("#db").attr("checked");
                 var drop = layui.$("#drop").attr("checked");
-                console.log("获取了db"+db);
-                console.log("获取了drop"+drop);
+                //console.log("获取了db"+db);
+                //console.log("获取了drop"+drop);
+                layui.$("#sql").html('');
                 var url = "https://api.saruri.cn/base.php";
                 layui.$.ajax({
                                 async: false,
