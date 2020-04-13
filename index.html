@@ -64,7 +64,7 @@
         <div class="layui-col-md4 layui-form-text td td2">
             <label class="layui-form-label">SQL文本</label>
             <div class="layui-input-block">
-                <textarea placeholder="这里显示建表sql的文本" id="sql" class="layui-textarea"></textarea>
+                <textarea placeholder="建表sql的文本" id="sql" class="layui-textarea"></textarea>
             </div>
         </div>
 
@@ -128,68 +128,26 @@
                 , layedit = layui.layedit
                 , laydate = layui.laydate;
 
-            //日期
-            laydate.render({
-                elem: '#date'
-            });
-            laydate.render({
-                elem: '#date1'
-            });
-
+           
             //创建一个编辑器
             var editIndex = layedit.build('LAY_demo_editor');
 
-            //自定义验证规则
-            form.verify({
-                title: function (value) {
-                    if (value.length < 5) {
-                        return '标题至少得5个字符啊';
-                    }
-                }
-                , pass: [
-                    /^[\S]{6,12}$/
-                    , '密码必须6到12位，且不能出现空格'
-                ]
-                , content: function (value) {
-                    layedit.sync(editIndex);
-                }
-            });
+       
 
             //监听指定开关
             form.on('switch(switchTest)', function (data) {
                 layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
                     offset: '6px'
                 });
-                layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+                layer.tips('11温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF11111', data.othis)
             });
 
-            //监听提交
-            form.on('submit(demo1)', function (data) {
-                console.log(data);
-
-
-                // var msg;
-                //  $.ajax({
-                //                 async: false,
-                //                 url: "base.php",
-                //                 data:data.field,
-                //                 success: function (data) {
-                //                     layer.alert(JSON.stringify(data.field), {
-                //                      title: 'saruri数据服务返回的结果'
-                //                      })
-                //                 }
-                //             });
-                //return msg;
-
-                return false;
-            });
+      
 
             layui.$('.sql').on('click', function () {
                 var md = layui.$("#md").html();
                 var db = layui.$("#db").attr("checked");
                 var drop = layui.$("#drop").attr("checked");
-                //console.log("获取了db"+db);
-                //console.log("获取了drop"+drop);
                 layui.$("#sql").html('');
                 var url = "https://api.saruri.cn/base.php";
                 layui.$.ajax({
@@ -205,39 +163,16 @@
                                 }
                 });
 
-                return false;
+               // return false;
                 //alert( standards);
                 
-                layui.$.post(url, { md: md, drop: drop,db: db }, function (data) {
-                    if (data.status == 'error') {
-                        layer.msg(data.msg, { icon: 5 });
-                        return;
-                    }
-                    layer.open({
-                        title: '审核',
-                        type: 1,
-                        skin: 'layui-layer-rim', //加上边框
-                        area: ['800px', '600px'], //宽高
-                        content: data,
-                    });
-                })
+                
             });
 
 
-            //表单赋值
-            layui.$('#LAY-component-form-setval').on('click', function () {
-                form.val('example', {
-                    "username": "贤心" // "name": "value"
-                    , "password": "123456"
-                    , "interest": 1
-                    , "like[write]": true //复选框选中状态
-                    , "close": true //开关状态
-                    , "sex": "女"
-                    , "desc": "我爱 layui"
-                });
-            });
+          
 
-            //表单取值
+            //表单取值 没什么用
             layui.$('#LAY-component-form-getval').on('click', function () {
                 var data = form.val('example');
 
