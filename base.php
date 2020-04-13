@@ -97,7 +97,7 @@ class MainService
         //回传json
         self::returnJson();
         //return $this->result;
-        //echo '处理了数据'."\r\n";
+        echo '处理了数据'."\r\n";
 
     }
 
