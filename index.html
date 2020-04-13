@@ -8,6 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
   <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+  <style>
+       @media screen and (max-width:600px){
+        .td{ margin-top: 1em;}
+        .td2{ margin-bottom: 1em;}
+        .td textarea{ width:16.7em;}          
+        }
+      
+  </style>
 </head>
 <body>
           
@@ -29,13 +37,13 @@
           <input type="radio" name="type" value="mongoDb" title="mongoDb下版本支持" disabled="">
         </div>
       </div>
-    <div class="layui-col-md5 layui-form-text">
+    <div class="layui-col-md4 layui-form-text td">
         <label class="layui-form-label">markdown代码</label>
-        <div class="layui-input-block">
-          <textarea placeholder="请输入内容" name="md" class="layui-textarea"></textarea>
+        <div class="layui-input-block" >
+          <textarea placeholder="请输入内容" name="md" class="layui-textarea" style="margin-right:2em;"></textarea>
         </div>
     </div>
-    <div class="layui-col-md5 layui-form-text">
+    <div class="layui-col-md4 layui-form-text td td2">
         <label class="layui-form-label">SQL文本</label>
         <div class="layui-input-block">
           <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
@@ -160,7 +168,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
  
   layui.$('.sql').on('click',function(){
     var openid = layui.$(this).attr('data');
-    var url = "base.php";
+    var url = "https://api.saruri.cn/base.php";
     layui.$.get(url,{openid:openid},function(data){
         if(data.status == 'error'){
             layer.msg(data.msg,{icon: 5});
