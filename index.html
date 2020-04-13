@@ -23,6 +23,7 @@
                 width: 16.7em;
             }
         }
+        .layui-textarea{min-height: 200px;}
     </style>
 </head>
 
@@ -63,19 +64,19 @@
         <div class="layui-col-md4 layui-form-text td td2">
             <label class="layui-form-label">SQL文本</label>
             <div class="layui-input-block">
-                <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
+                <textarea placeholder="请输入内容" id="sql" class="layui-textarea"></textarea>
             </div>
         </div>
 
 
-        <div class="layui-form-item">
+        <!-- <div class="layui-form-item">
             <label class="layui-form-label">可选项</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="param[db]" val="db"  title="innodb引擎" checked="">
-                <input type="checkbox" name="param[drop]" val="drop" title="扔掉原表">
+                <input type="checkbox" id="db" name="param[db]" val="db"  title="innodb引擎" checked="">
+                <input type="checkbox" id="drop" name="param[drop]" val="drop" title="扔掉原表">
 
             </div>
-        </div>
+        </div> -->
         <!-- <div class="layui-form-item">
     <label class="layui-form-label">自动复制到剪贴板</label>
     <div class="layui-input-block">
@@ -106,7 +107,7 @@
       <textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
     </div>
   </div>-->
-        <div class="layui-form-item">
+        <div class="layui-form-item" style="padding-top: 10px;">
             <div class="layui-input-block">
                 <button type="button" class="layui-btn sql  lay-filter="demo1">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -185,19 +186,28 @@
 
             layui.$('.sql').on('click', function () {
                 var md = layui.$("#md").html();
-                //var param = layui.$("#param").val();
-                //var data1 = form.val('param');
-                //alert(JSON.stringify(data1));
-                var arr = new Array();
-                var standards='';
-                layui.$("input:checkbox[name='param']").each(function() { // 遍历 name=standard 的多选框
-                    standards += ',' + layui.$(this).val();
-                    //standardsName += ',' + $(this).attr('title');
-                    console.log("获取了chexkbox");
-                });
-                //alert( standards);
+                var db = layui.$("#db").attr("checked");
+                var drop = layui.$("#drop").attr("checked");
+                console.log("获取了db"+db);
+                console.log("获取了drop"+drop);
                 var url = "https://api.saruri.cn/base.php";
-                layui.$.post(url, { md: md, drop: arr }, function (data) {
+                layui.$.ajax({
+                                async: false,
+                                url: url,
+                                data:{md: md, drop: drop,db: db},
+                                success: function (data) {
+                                    console.log(data);
+                                    layui.$("#sql").html(data);
+                                    // layer.alert(JSON.stringify(data.field), {
+                                    //  title: 'saruri数据服务返回的结果'
+                                    //  })
+                                }
+                });
+
+                return false;
+                //alert( standards);
+                
+                layui.$.post(url, { md: md, drop: drop,db: db }, function (data) {
                     if (data.status == 'error') {
                         layer.msg(data.msg, { icon: 5 });
                         return;
