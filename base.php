@@ -124,15 +124,21 @@ class MainService
     {
         $arr=$this->result['fields'];
         $string='';
+        $endStr=end($arr);
         if($arr){
             foreach ($arr as $key => $result) {
-                # code...
-                $string.= "`".$result['name']."` ".$result['type'].$result['length']." ".$result['key']." ".$result['auto']." ".$result['null']." ".$result['default']." COMMENT '".$result['comment']."',"."\n";
+                if($endStr==$result){
+                    $string.= "`".$result['name']."` ".$result['type'].$result['length']." ".$result['key']." ".$result['auto']." ".$result['null']." ".$result['default']." COMMENT '".$result['comment']."'"."\n";
+                }
+
+                if($endStr!=$result){
+                    $string.= "`".$result['name']."` ".$result['type'].$result['length']." ".$result['key']." ".$result['auto']." ".$result['null']." ".$result['default']." COMMENT '".$result['comment']."',"."\n";
+                }
+               
             }
         }
 
-        $str=trim($string,","."\n");
-        return $string."\n";
+        return trim($string);
 
     }
 
