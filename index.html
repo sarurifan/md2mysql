@@ -158,7 +158,8 @@
                                 data:{md: md, drop: drop,db: db},
                                 success: function (data) {
                                     console.log(data);
-                                    layui.$("#sql").html(data);
+                                    //layui.$("#sql").html(data);
+                                    layui.$("#sql").html(JSON.stringify(data.data));
                                     // layer.alert(JSON.stringify(data.field), {
                                     //  title: 'saruri数据服务返回的结果'
                                     //  })
