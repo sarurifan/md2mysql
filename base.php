@@ -208,7 +208,7 @@ class MainService
 
    
 }
-$string='# 分销记录 retaileRecord
+$string='# 分销记录表 retaileRecord
 项目 | 类型|说明表a 
 ---|---|---
 retaile_record_id| int 8 auto key |收益记录id
@@ -224,5 +224,6 @@ retaile_score5| 文本 |收益金额
 retaile_score6|int 11 |收益金额';
 
 $string=$_POST['md'];
+exit($string);
 $md= new MainService($string);
 $md->run();
