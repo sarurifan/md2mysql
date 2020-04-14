@@ -166,8 +166,8 @@ class MainService
             'msg'=>'sql数据',
             'data'=>$this->sql
         ];
-        return json_encode($arr,true);
-        exit();
+        
+        exit(json_encode($arr,true));
 
 
     }
