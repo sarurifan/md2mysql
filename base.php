@@ -225,6 +225,6 @@ retaile_score6|int 11 |收益金额';
 
 //注释一下 kanances
 $string=$_POST['md'];
-//exit($string);
+exit($string);
 $md= new MainService($string);
 $md->run();
