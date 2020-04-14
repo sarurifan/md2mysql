@@ -209,7 +209,7 @@ class MainService
    
 }
 $string='# 分销记录 retaileRecord
-项目 | 类型|说明表
+项目 | 类型|说明表a 
 ---|---|---
 retaile_record_id| int 8 auto key |收益记录id
 parent_userid | int 8 |上级用户 
