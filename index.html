@@ -24,6 +24,7 @@
             }
         }
         .layui-textarea{min-height: 200px;}
+        #sql{font-size: xx-small;}
     </style>
 </head>
 
@@ -111,6 +112,7 @@
             <div class="layui-input-block">
                 <button type="button" class="layui-btn sql  lay-filter="demo1">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置内容</button>
+                <button type="button" class="cut layui-btn layui-btn-primary" data-clipboard-action="cut" data-clipboard-target="#sql" >复制到剪贴板</button>
             </div>
         </div>
     </form>
@@ -120,6 +122,7 @@
 
 
     <script src="https://www.layuicdn.com/layui/layui.js"></script>
+    <script src="https://cdn.bootcss.com/clipboard.js/2.0.6/clipboard.js"></script>
   
     <script>
         layui.use(['form', 'layedit', 'laydate'], function () {
@@ -129,29 +132,12 @@
                 , laydate = layui.laydate
                 ,$ = layui.$;
 
-           
-            //创建一个编辑器
-            var editIndex = layedit.build('LAY_demo_editor');
-
-       
-
-            //监听指定开关
-            form.on('switch(switchTest)', function (data) {
-                layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
-                    offset: '6px'
-                });
-                layer.tips('11温馨提示：请注意开关状态的文字可以随意定义，11而不仅仅是ON|OFF11111', data.othis)
-            });
-
-      
 
             $('.sql').on('click', function () {
                 var md = $("#md").val();
-                console.log(md);
+                
                 let textarea=form.val("md");
-                console.log(textarea);
-                //var db = layui.$("#db").attr("checked");
-                //var drop = layui.$("#drop").attr("checked");
+                     
                 $("#sql").val('');
                 var url = "https://api.saruri.cn/base.php";
                 $.ajax({
@@ -161,32 +147,27 @@
                                 dataType:"json",
                                 data:{md: md},
                                 success: function (data) {
-                                    console.log(data.data);
                                     $("#sql").val(data.data);
-                                   //$("#sql").val(JSON.stringify(data.data));
-                                     layer.alert(JSON.stringify(data.data), {
-                                     title: 'saruri数据服务返回的结果'
-                                      })
+                                   
+                                     
                                 }
                 });
 
-               // return false;
-                //alert( standards);
+             
                 
                 
             });
 
-
-          
-
-            //表单取值 没什么用
-            layui.$('#LAY-component-form-getval').on('click', function () {
-                var data = form.val('example');
-
-                alert(JSON.stringify(data));
-            });
-
+            var clipboard = new ClipboardJS('.cut');
+	              clipboard.on('success', function(e) {
+	                  alert('复制成功');
+	                  clipboard.destroy();  //解决多次弹窗
+	                  e.clearSelection();
+	              });
         });
+      
+
+        
     </script>
 
 </body>
