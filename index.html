@@ -152,7 +152,9 @@
                 var url = "https://api.saruri.cn/base.php";
                 layui.$.ajax({
                                 async: false,
+                                type:"Post",
                                 url: url,
+                                dataType:"json",
                                 data:{md: md, drop: drop,db: db},
                                 success: function (data) {
                                     console.log(data);

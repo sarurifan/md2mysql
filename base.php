@@ -117,7 +117,8 @@ class MainService
             // `description` varchar(25) DEFAULT NULL COMMENT '描述',
             // PRIMARY KEY (`id`)
         $sql.=" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '".$this->result['tableComment']."';"."\r\n";
-        echo $sql."\r\n";
+        $this->$sql=$sql;
+        //echo $sql."\r\n";
         //$arr=[];
        //var_dump($this->result);
         //echo '获取了数据'."\r\n";
@@ -159,6 +160,16 @@ class MainService
     public function returnJson()
     {
         //echo '返回了json'."\r\n";
+
+        $arr= [
+            'status' =>1,
+            'msg'=>'sql数据',
+            'data'=>$this->sql
+        ];
+        return json_encode($arr,true);
+        exit();
+
+
     }
 
 
