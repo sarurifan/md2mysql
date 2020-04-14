@@ -108,7 +108,7 @@ class MainService
     */ 
     public function makeSql()
     {   
-        $sql="#DROP TABLE IF EXISTS ".$this->result['tableName'].";"."\n";//"&#13;&#10;";
+        $sql="#DROP TABLE IF EXISTS ".$this->result['tableName'].";"."\\n";//"&#13;&#10;";
         $sql.="CREATE TABLE `".$this->result['tableName']."` (";
         #$sql.=" `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '城市编号',";
         $sql.=$this->joinField();
