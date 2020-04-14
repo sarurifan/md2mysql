@@ -117,7 +117,7 @@ class MainService
             // `description` varchar(25) DEFAULT NULL COMMENT '描述',
             // PRIMARY KEY (`id`)
         $sql.=" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '".$this->result['tableComment']."';"."\r\n";
-        $this->$sql=$sql;
+        $this->sql=$sql;
         //echo $sql."\r\n";
         //$arr=[];
        //var_dump($this->result);
