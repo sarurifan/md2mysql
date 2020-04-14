@@ -23,8 +23,14 @@
                 width: 16.7em;
             }
         }
-        .layui-textarea{min-height: 200px;}
-        #sql{font-size: xx-small;}
+
+        .layui-textarea {
+            min-height: 200px;
+        }
+
+        #sql {
+            font-size: xx-small;
+        }
     </style>
 </head>
 
@@ -53,13 +59,15 @@
         <div class="layui-col-md4 layui-form-text td">
             <label class="layui-form-label">markdown代码</label>
             <div class="layui-input-block">
-                <textarea placeholder="请输入内容markdown格式" name="md" id="md" class="layui-textarea" style="margin-right:2em;">项目 | 类型|说明
-            ---|---|---
-            retaile_id| int 11  yes|id
-            parent_userid | int 8|上级用户 
-            sub_userid|int 8 |下级用户
-            retaile_reg_type| tinnyint 1 | 0 二维码 ,1 链接
-            retaile_time| int 11|时间</textarea>
+                <textarea placeholder="请输入内容markdown格式" name="md" id="md" class="layui-textarea"
+                    style="margin-right:2em;"># md格式演示表  isntall
+                    项目 | 类型|说明
+                                ---|---|---
+                                retaile_id| int 11  yes|id
+                                parent_userid | int 8|上级用户 
+                                sub_userid|int 8 |下级用户
+                                retaile_reg_type| tinnyint 1 | 0 二维码 ,1 链接
+                                retaile_time| int 11|时间</textarea>
             </div>
         </div>
         <div class="layui-col-md4 layui-form-text td td2">
@@ -70,49 +78,12 @@
         </div>
 
 
-        <!-- <div class="layui-form-item">
-            <label class="layui-form-label">可选项</label>
-            <div class="layui-input-block">
-                <input type="checkbox" id="db" name="param[db]" val="db"  title="innodb引擎" checked="">
-                <input type="checkbox" id="drop" name="param[drop]" val="drop" title="扔掉原表">
-
-            </div>
-        </div> -->
-        <!-- <div class="layui-form-item">
-    <label class="layui-form-label">自动复制到剪贴板</label>
-    <div class="layui-input-block">
-      <input type="checkbox" name="close" lay-skin="switch" lay-text="ON|OFF">
-    </div>
-  </div> -->
-        <!-- <div class="layui-form-item" pane="">
-    <label class="layui-form-label">原始复选框</label>
-    <div class="layui-input-block">
-      <input type="checkbox" name="like1[write]" lay-skin="primary" title="写作" checked="">
-      <input type="checkbox" name="like1[read]" lay-skin="primary" title="阅读">
-      <input type="checkbox" name="like1[game]" lay-skin="primary" title="游戏" disabled="">
-    </div>
-  </div>
-  
-  
-  <div class="layui-form-item">
-    <label class="layui-form-label">开关-默认开</label>
-    <div class="layui-input-block">
-      <input type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="ON|OFF">
-    </div>
-  </div> -->
-
-
-        <!--<div class="layui-form-item layui-form-text">
-    <label class="layui-form-label">编辑器</label>
-    <div class="layui-input-block">
-      <textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
-    </div>
-  </div>-->
         <div class="layui-form-item" style="padding-top: 10px;">
             <div class="layui-input-block">
-                <button type="button" class="layui-btn sql  lay-filter="demo1">立即提交</button>
+                <button type="button" class="layui-btn sql  lay-filter=" demo1">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置内容</button>
-                <button type="button" class="cut layui-btn layui-btn-primary" data-clipboard-action="cut" data-clipboard-target="#sql" >复制到剪贴板</button>
+                <button type="button" class="cut layui-btn layui-btn-primary" data-clipboard-action="cut"
+                    data-clipboard-target="#sql">复制到剪贴板</button>
             </div>
         </div>
     </form>
@@ -123,51 +94,51 @@
 
     <script src="https://www.layuicdn.com/layui/layui.js"></script>
     <script src="https://cdn.bootcss.com/clipboard.js/2.0.6/clipboard.js"></script>
-  
+
     <script>
         layui.use(['form', 'layedit', 'laydate'], function () {
             var form = layui.form
                 , layer = layui.layer
                 , layedit = layui.layedit
                 , laydate = layui.laydate
-                ,$ = layui.$;
+                , $ = layui.$;
 
 
             $('.sql').on('click', function () {
                 var md = $("#md").val();
-                
-                let textarea=form.val("md");
-                     
+
+                let textarea = form.val("md");
+
                 $("#sql").val('');
                 var url = "https://api.saruri.cn/base.php";
                 $.ajax({
-                                async: false,
-                                type:"Post",
-                                url: url,
-                                dataType:"json",
-                                data:{md: md},
-                                success: function (data) {
-                                    $("#sql").val(data.data);
-                                   
-                                     
-                                }
+                    async: false,
+                    type: "Post",
+                    url: url,
+                    dataType: "json",
+                    data: { md: md },
+                    success: function (data) {
+                        $("#sql").val(data.data);
+                        var clipboard = new ClipboardJS('.cut');
+                        clipboard.on('success', function (e) {
+                            alert('复制成功');
+                            clipboard.destroy();  //解决多次弹窗
+                            e.clearSelection();
+                        });
+
+                    }
                 });
 
-             
-                
-                
+
+
+
             });
 
-            var clipboard = new ClipboardJS('.cut');
-	              clipboard.on('success', function(e) {
-	                  alert('复制成功');
-	                  clipboard.destroy();  //解决多次弹窗
-	                  e.clearSelection();
-	              });
-        });
-      
 
-        
+        });
+
+
+
     </script>
 
 </body>

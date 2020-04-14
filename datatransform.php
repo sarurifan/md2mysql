@@ -33,7 +33,6 @@ class DataTransform
         $this->_config['requestString']=str_replace("#","",$this->_config['requestString']);
         $this->_config['requestString']=str_replace(">","",$this->_config['requestString']);
         $this->_config['requestString']=str_replace("*","",$this->_config['requestString']);
-        //$this->arrResult=explode("\r\n",$this->_config['requestString']);
         $this->arrResult=explode("\n",$this->_config['requestString']);
    }
       
@@ -66,7 +65,7 @@ class DataTransform
     */ 
     public function getField($string)
     {
-        //do something
+       
         $string=trim($string);
         $arr=explode("|",$string);
         $result['name']=trim($arr[0]);//字段名称
@@ -135,13 +134,13 @@ class DataTransform
     */ 
     public function getLength($string)
     {
-        //ALERT TABLE table-name ADD col-name col-type COMMENT 'xxx';
+        
         $arr=explode("|",trim($string));
-        //var_dump($arr);
+        
         if($arr){
         foreach ($arr as $key => $value) {
             if(intval($value)>0){
-                //return '######pass';
+               
                 return '('.$value.')';
             }
         }
@@ -162,7 +161,7 @@ class DataTransform
     */ 
     public function getKey($string)
     {
-        //do something
+        
         if($this->check_str($string,'key')){  return 'PRIMARY KEY';  }
         if($this->check_str($string,'主键')){  return 'PRIMARY KEY';  }
         return '';
@@ -175,7 +174,7 @@ class DataTransform
     */ 
     public function getAuto($string)
     {
-        //do something
+        
         if($this->check_str($string,'auto')){  return 'AUTO_INCREMENT';  }
         if($this->check_str($string,'自增')){  return 'AUTO_INCREMENT';  }
         return '';
@@ -226,7 +225,7 @@ class DataTransform
         }
 
         return '';
-        //default current_timestamp
+        
     }
 
    /* 
@@ -240,8 +239,7 @@ class DataTransform
         $arr=explode(" ",$string);
         $this->tableConfig['tableComment']=$arr[0];
         $this->tableConfig['tableName']=end($arr);
-        //var_dump($this->tableConfig);
-       // echo '保存表头'."\r\n";
+       
    }
 
    public function run()
@@ -253,16 +251,9 @@ class DataTransform
         //保存字段数据
         self::saveTableFiled(); 
         return $this->tableConfig;
-        //var_dump($this->tableConfig);
-         //echo '处理了数据'."\r\n";
+       
     }
 
 
       
 } 
-//$arr=[];
-//$md= new DataTransform($arr);
-//$md->run();
-// DROP TABLE IF EXISTS test1;
-// CREATE TABLE test1 (test int);
-// ALTER TABLE test1 DROP test

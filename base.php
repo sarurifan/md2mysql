@@ -96,8 +96,7 @@ class MainService
         
         //回传json
         $this->returnJson();
-        //return $this->result;
-        //echo '处理了数据'."\r\n";
+       
 
     }
 
@@ -108,20 +107,12 @@ class MainService
     */ 
     public function makeSql()
     {   
-        $sql="#DROP TABLE IF EXISTS ".$this->result['tableName'].";"."\n";//"&#13;&#10;";
+        $sql="#DROP TABLE IF EXISTS ".$this->result['tableName'].";"."\n";
         $sql.="CREATE TABLE `".$this->result['tableName']."` (";
-        #$sql.=" `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '城市编号',";
         $sql.=$this->joinField();
-            // `province_id` int(10) unsigned  NOT NULL COMMENT '省份编号',
-            // `city_name` varchar(25) DEFAULT NULL COMMENT '城市名称',
-            // `description` varchar(25) DEFAULT NULL COMMENT '描述',
-            // PRIMARY KEY (`id`)
-        $sql.=" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '".$this->result['tableComment']."';"."\n";//"&#13;&#10;";
+        $sql.=" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '".$this->result['tableComment']."';"."\n";
         $this->sql=$sql;
-        //echo $sql."\r\n";
-        //$arr=[];
-       //var_dump($this->result);
-        //echo '获取了数据'."\r\n";
+        
     }
 
     /* 
@@ -141,14 +132,6 @@ class MainService
         }
 
         return trim($string,",");
-        // $result['name']=$arr[0];//字段名称
-        // $result['comment']=$arr[2];//字段中文说明
-        // $result['type']=$this->getType($string);//类型
-        // $result['length']=$this->getLength($string);//长度
-        // $result['key']=$this->getKey($string);//主键
-        // $result['null']=$this->getNull($string);//是否允许空
-        // $result['auto']=$this->getAuto($string);//是否自增
-        // $result['default']=$this->getDefault($string);//是否自增
 
     }
 
@@ -226,8 +209,5 @@ retaile_score6|int 11 |收益金额';
 //注释一下 kanances
 $string=$_POST['md'];
 
-//$arr=explode("\n",$string);
-//var_dump($arr);
-//exit($string);
 $md= new MainService($string);
 $md->run();
