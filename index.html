@@ -64,7 +64,7 @@
         <div class="layui-col-md4 layui-form-text td td2">
             <label class="layui-form-label">SQL文本</label>
             <div class="layui-input-block">
-                <textarea placeholder="建表sql的文本" id="sql" class="layui-textarea"></textarea>
+                <textarea placeholder="建表sql的文本" type="text/plain" name=sql id="sql" class="layui-textarea"></textarea>
             </div>
         </div>
 
@@ -126,7 +126,8 @@
             var form = layui.form
                 , layer = layui.layer
                 , layedit = layui.layedit
-                , laydate = layui.laydate;
+                , laydate = layui.laydate
+                ,$ = layui.$;
 
            
             //创建一个编辑器
@@ -144,25 +145,28 @@
 
       
 
-            layui.$('.sql').on('click', function () {
-                var md = layui.$("#md").html();
-                var db = layui.$("#db").attr("checked");
-                var drop = layui.$("#drop").attr("checked");
-                layui.$("#sql").html('');
+            $('.sql').on('click', function () {
+                var md = $("#md").val();
+                console.log(md);
+                let textarea=form.val("md");
+                console.log(textarea);
+                //var db = layui.$("#db").attr("checked");
+                //var drop = layui.$("#drop").attr("checked");
+                $("#sql").val('');
                 var url = "https://api.saruri.cn/base.php";
-                layui.$.ajax({
+                $.ajax({
                                 async: false,
                                 type:"Post",
                                 url: url,
                                 dataType:"json",
-                                data:{md: md, drop: drop,db: db},
+                                data:{md: md},
                                 success: function (data) {
                                     console.log(data);
-                                    //layui.$("#sql").html(data);
-                                    layui.$("#sql").html(JSON.stringify(data.data));
-                                    // layer.alert(JSON.stringify(data.field), {
-                                    //  title: 'saruri数据服务返回的结果'
-                                    //  })
+                                    layui.$("#sql").html(data);
+                                    $("#sql").val(JSON.stringify(data.data));
+                                     layer.alert(JSON.stringify(data.data), {
+                                     title: 'saruri数据服务返回的结果'
+                                      })
                                 }
                 });
 
