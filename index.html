@@ -161,9 +161,9 @@
                                 dataType:"json",
                                 data:{md: md},
                                 success: function (data) {
-                                    console.log(data);
-                                    layui.$("#sql").html(data);
-                                    $("#sql").val(JSON.stringify(data.data));
+                                    console.log(data.data);
+                                    $("#sql").val(data.data);
+                                   //$("#sql").val(JSON.stringify(data.data));
                                      layer.alert(JSON.stringify(data.data), {
                                      title: 'saruri数据服务返回的结果'
                                       })
