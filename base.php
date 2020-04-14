@@ -95,7 +95,7 @@ class MainService
         self::saveJsonFile();
         
         //回传json
-        self::returnJson();
+        $this->returnJson();
         //return $this->result;
         //echo '处理了数据'."\r\n";
 
