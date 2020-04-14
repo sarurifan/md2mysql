@@ -131,7 +131,8 @@ class MainService
             }
         }
 
-        return trim($string,",");
+        $str=trim($string,","."\n");
+        return $string."\n";
 
     }
 
