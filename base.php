@@ -223,7 +223,7 @@ retaile_score4|时间 11 |收益金额
 retaile_score5| 文本 |收益金额
 retaile_score6|int 11 |收益金额';
 
-//注释一下
+//注释一下 kanances
 $string=$_POST['md'];
 //exit($string);
 $md= new MainService($string);
