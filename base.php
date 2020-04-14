@@ -116,7 +116,7 @@ class MainService
             // `city_name` varchar(25) DEFAULT NULL COMMENT '城市名称',
             // `description` varchar(25) DEFAULT NULL COMMENT '描述',
             // PRIMARY KEY (`id`)
-        $sql.=" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '".$this->result['tableComment']."';"."\n";//"&#13;&#10;";
+        $sql.=" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT '".$this->result['tableComment']."';"."&#13;";//"&#13;&#10;";
         $this->sql=$sql;
         //echo $sql."\r\n";
         //$arr=[];
