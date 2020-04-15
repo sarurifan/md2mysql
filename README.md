@@ -89,7 +89,30 @@
 
 演示 地址 :https://api.saruri.cn/
 
+# 介绍
+### 目前支持字段类型参数
+- tinyint
+- mediumint
+- int
+- float
+- double
+- varcha
+- char
+- text
+- 整数
+- 文本
+- datetime
+- 时间戳
+- 时间
+- 日期
 
+### 支持的 字段参数
+- 支持 设置默认值
+- 支持 key 主键参数
+- 支持 auto 参数 自增参数
+- 支持 位数自动判断
+- 支持 innodb
+- 支持 删除同名表重建
 
 # 改进
 其他数据库看实际业务情况支持吧.
