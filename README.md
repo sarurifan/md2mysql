@@ -18,10 +18,10 @@
 > # sys_think_php  系统基础表
 > 字段|参数|备注
 > ---|---|---
-> id| int 11 key| 表id
+> id| int 11 key auto| 表id
 > name| varchar 255 notnull 不为空|姓名
-
-
+> ctime| date |创建时间 
+> | date |创建时间 
 
 # 伪代码
 ```
